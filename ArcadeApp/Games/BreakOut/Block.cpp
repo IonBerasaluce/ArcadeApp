@@ -1,7 +1,7 @@
 #include "Block.h"
 #include "Graphics/Screen.h"
 #include "Ball.h"
-#include "BoundaryEdge.h"
+#include "Games/BoundaryEdge.h"
 
 
 Block::Block(): m_OutlineColour(Colour::White()), m_FillColour(Colour::White()), m_Hp(1)

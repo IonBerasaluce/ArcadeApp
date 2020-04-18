@@ -7,7 +7,7 @@ class Screen;
 
 struct ScoreInformation
 {
-	int score;
+	int score = 0;
 	std::string PlayerName;
 	bool operator < (const ScoreInformation& scoreb) const {
 		return score > scoreb.score;

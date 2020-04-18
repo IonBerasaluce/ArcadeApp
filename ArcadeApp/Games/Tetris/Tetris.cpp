@@ -7,6 +7,7 @@
 #include "Inputs/GameController.h"
 #include "Graphics/Screen.h"
 #include "App/App.h"
+#include "Scenes/HighScoreScene.h"
 
 
 void Tetris::Init(GameController& controller)
@@ -135,7 +136,15 @@ void Tetris::Update(uint32_t dt)
 			m_Block.Update(dt);
 		}
 
-		if (m_TimeAccumulated > 500)
+		// Check if we have to increase the level
+		if ((m_TetrisLevel.GetCompletedLines() % 2 <= m_CompletedLines % 2) && (m_CompletedLines < m_TetrisLevel.GetCompletedLines()))
+		{
+			m_Level -= 50;
+		}
+
+		m_CompletedLines = m_TetrisLevel.GetCompletedLines();
+
+		if (m_TimeAccumulated > m_Level)
 		{
 			// Move the block down if we can do so
 			Vec2D dy = { 0.0f, 1.0f * (float)Tetromino::BLOCK_HEIGHT };
@@ -151,11 +160,10 @@ void Tetris::Update(uint32_t dt)
 				m_TetrisLevel.AddPiece(m_Block);
 
 				// If there are completed lines update the field - clear the line
-				m_TetrisLevel.Update(dt);
+				m_TetrisLevel.Update(dt, m_Score.score);
 
 				// m_Block becomes m_nextBlock and starts to move down if it can and add it 
 				m_Block.Init(m_NextBlock.GetPieceType(), m_LevelBoundary, m_PieceStartPosition);
-				++m_BlocksAccumulated;
 
 				// m_NextBlock gets generated
 				Vec2D nextPiecePosition = { m_LevelBoundary.GetBottomRight().GetX() + 35, m_LevelBoundary.GetTopLeft().GetY() };
@@ -167,14 +175,25 @@ void Tetris::Update(uint32_t dt)
 					m_GameState = TetrisGameState::IN_GAME_OVER;
 
 					// Update the highScore table
+					m_HighScoreTable.UpdateTable(m_Score);
+					m_HighScoreTable.SaveToFile();
 
-					// Reset the Game
-					ResetGame();
+					// Make the highScoreScene Before resetting the game
+					std::unique_ptr<HighScoreScene> highScoreScene = std::make_unique<HighScoreScene>(m_HighScoreTable);
+
+					// Push the game over highscore scene
+					App::Singleton().PushScene(std::move(highScoreScene));
 				}
 			}
 
 			m_TimeAccumulated = 0;
 		}
+	}
+
+	if (m_GameState == TetrisGameState::IN_GAME_OVER)
+	{
+		// Reset the Game
+		ResetGame();
 	}
 }
 
@@ -184,15 +203,16 @@ void Tetris::Draw(Screen& screen)
 	m_NextBlock.Draw(screen);
 	
 	// Draw the level
-	m_TetrisLevel.Draw(screen);
+	m_TetrisLevel.Draw(screen, m_Level, m_Score.score);
 }
 
 
 void Tetris::ResetGame()
 {
 	m_TetrisLevel.Init(Vec2D(Tetromino::BLOCK_WIDTH, Tetromino::BLOCK_HEIGHT));
+
+	m_CompletedLines = 0;
 	
-	// Temporary
 	m_LevelBoundary = m_TetrisLevel.GetLevelBoundary();
 
 	m_PieceStartPosition = { m_LevelBoundary.GetTopLeft().GetX() + Tetromino::BLOCK_WIDTH * 3, m_LevelBoundary.GetTopLeft().GetY() };
@@ -202,9 +222,14 @@ void Tetris::ResetGame()
 	m_Block.Init(static_cast<TetrominoType>(rand() % 7), m_LevelBoundary, m_PieceStartPosition);
 	m_NextBlock.Init(static_cast<TetrominoType>(rand() % 7), m_LevelBoundary, nextPiecePosition);
 
+	m_HighScoreTable.Init();
+	m_Score.PlayerName = "ABC";
+	m_Score.score = 0;
+
 	m_GameState = TetrisGameState::IN_SERVE;
 	
-	m_BlocksAccumulated = 0;
+	m_Level = 500;
+	m_CompletedLines = 0;
 }
 
 const std::string& Tetris::GetName() const

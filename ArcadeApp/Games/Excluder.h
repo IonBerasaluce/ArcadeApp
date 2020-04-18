@@ -9,7 +9,7 @@
 #define GAMES_EXCLUDER_H_
 
 #include "Shapes/AARectangle.h"
-#include "BoundaryEdge.h"
+#include "Games/BoundaryEdge.h"
 
 class Excluder
 {

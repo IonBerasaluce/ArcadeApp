@@ -8,6 +8,12 @@
 
 void HighScoreTable::Init()
 {
+    // If there is a table that is already loaded delete it
+    if (!m_Table.empty())
+    {
+        ClearTable();
+    }
+
     std::ifstream file(m_ScoreFilePath);
 
     // Should check if we have a file to load, if we dont -> construct default with scores of 0

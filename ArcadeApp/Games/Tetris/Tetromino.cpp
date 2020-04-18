@@ -166,33 +166,6 @@ void Tetromino::SetInitialIndices()
 	}
 }
 
-// Move to the Game Level class and we will pass the tetromino block by reference
-const bool Tetromino::IsValidPosition(const Vec2D& dPosition, int rotation)
-{
-	// Replicate the block data and move it/rotate it to the new position
-	AARectangle expectedBlock;
-	int rotatedIndex;
-
-	for (const auto& i : m_SignificantIndices)
-	{
-		rotatedIndex = FindRotatedIndex(i, rotation);
-		expectedBlock = m_BlockData[rotatedIndex];
-		expectedBlock.MoveBy(dPosition);
-
-		if (expectedBlock.GetTopLeft().GetX() < m_Boundary.GetTopLeft().GetX() || expectedBlock.GetBottomRight().GetX() > m_Boundary.GetBottomRight().GetX())
-		{
-			return false;
-		}
-		
-		if (expectedBlock.GetBottomRight().GetY() > m_Boundary.GetBottomRight().GetY())
-		{
-			return false;
-		}
-	}
-
-	return true;
-}
-
 std::vector<AARectangle> Tetromino::GetSignificantBlocks() const
 {
 	std::vector<AARectangle> significantBlocks;

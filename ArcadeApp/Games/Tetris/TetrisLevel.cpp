@@ -1,3 +1,5 @@
+#include <math.h> 
+
 #include "TetrisLevel.h"
 #include "Graphics/Colour.h"
 #include "Graphics/Screen.h"
@@ -20,9 +22,10 @@ void TetrisLevel::Init(const Vec2D& startPosition)
 	}
 	m_Lines = 0;
 	m_Font = App::Singleton().GetFont();
+
 }
 
-void TetrisLevel::Update(uint32_t dt)
+void TetrisLevel::Update(uint32_t dt, int& score)
 {
 	/*
 	1. Loop through the array, if there is a given row where all values are not 0, set them all to 0
@@ -67,10 +70,11 @@ void TetrisLevel::Update(uint32_t dt)
 
 		// Add to the score
 		m_Lines += lines.size();
+		score += (int)round(93.3333 * pow(lines.size(), 3) - 490 * pow(lines.size(), 2) + 876.6667 * lines.size() - 440);
 	}
 }
 
-void TetrisLevel::Draw(Screen& theScreen)
+void TetrisLevel::Draw(Screen& theScreen, int level, int score)
 {
 	// Draw the playing field 
 	Colour colours[7] = { Colour::Cyan(), Colour::Blue(), Colour::Orange(), Colour::Yellow(), Colour::Green(), Colour::Pink(), Colour::Red() };
@@ -98,8 +102,11 @@ void TetrisLevel::Draw(Screen& theScreen)
 	
 	float start = newPieceEnclosure.GetBottomRight().GetY() + 5;
 
+	// Transform the level to the real score
+	level = (500 - level) / 50 + 1;
+
 	// Write the score and the number of lines completed
-	std::string textToPrint[3] = { "Level:  " + std::to_string(1), "Lines:  " + std::to_string(m_Lines), "Score:  " + std::to_string(0) };
+	std::string textToPrint[3] = { "Level: " + std::to_string(level), "Lines: " + std::to_string(m_Lines), "Px: " + std::to_string(score) };
 	
 
 	// Draw the Rectangle for the next piece, score, level and lines completed

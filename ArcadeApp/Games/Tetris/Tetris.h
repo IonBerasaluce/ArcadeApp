@@ -2,6 +2,7 @@
 #include "Games/Game.h"
 #include "Tetromino.h"
 #include "TetrisLevel.h"
+#include "App/HighScoreTable.h"
 
 enum class TetrisGameState
 {
@@ -28,10 +29,17 @@ private:
 	Tetromino m_Block;
 	Tetromino m_NextBlock;
 	TetrisLevel m_TetrisLevel;
+	
+	ScoreInformation m_Score;
+	HighScoreTable m_HighScoreTable;
+
 	int m_BlocksAccumulated;
 	
 	AARectangle m_LevelBoundary;
 	uint32_t m_TimeAccumulated = 0;
 
 	Vec2D m_PieceStartPosition;
+	
+	int m_CompletedLines;
+	int m_Level;
 };

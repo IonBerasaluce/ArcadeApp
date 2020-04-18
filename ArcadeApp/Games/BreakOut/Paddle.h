@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 
-#include "Excluder.h"
+#include "Games/Excluder.h"
 
 class Screen;
 class Ball;

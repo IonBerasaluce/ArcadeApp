@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Excluder.h"
+#include "Games/Excluder.h"
 #include "Graphics/Colour.h"
 
 class Ball;

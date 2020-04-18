@@ -12,6 +12,7 @@
 
 #include "App/App.h"
 #include "GameScene.h"
+#include "Pacman/PacmanStartScene.h"
 #include "Games/BreakOut/BreakOut.h"
 #include "Games/Tetris/Tetris.h"
 #include "NotImplementedScene.h"
@@ -46,11 +47,11 @@ void ArcadeScene::Init()
 	SetButtonActions(actions);
 
 	ButtonOptionsScene::Init();
+
 }
 
 void ArcadeScene::Update(uint32_t dt)
 {
-
 }
 
 void ArcadeScene::Draw(Screen& theScreen)
@@ -93,7 +94,7 @@ std::unique_ptr<Scene> ArcadeScene::GetScene(eGame game)
 		break;
 		case PACMAN:
 		{
-
+			return std::make_unique<PacmanStartScene>();
 		}
 		break;
 	}

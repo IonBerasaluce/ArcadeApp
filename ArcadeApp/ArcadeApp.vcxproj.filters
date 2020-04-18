@@ -78,9 +78,6 @@
     <ClCompile Include="Games\BreakOut\Ball.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Games\BreakOut\Excluder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Games\BreakOut\LevelBoundary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -121,6 +118,27 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Games\Tetris\TetrisLevel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\AnimationPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\AnimatedSprite.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Games\Pacman\Pacman.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenes\Pacman\PacmanStartScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Games\Excluder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Games\Pacman\PacmanLevel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -188,16 +206,10 @@
     <ClInclude Include="Games\BreakOut\BreakOut.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Games\BreakOut\BoundaryEdge.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Games\BreakOut\Paddle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Games\BreakOut\Ball.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Games\BreakOut\Excluder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Games\BreakOut\LevelBoundary.h">
@@ -240,6 +252,30 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Games\Tetris\TetrisLevel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Animation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\AnimationPlayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\AnimatedSprite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Games\Pacman\Pacman.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes\Pacman\PacmanStartScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Games\Pacman\PacmanLevel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Games\Excluder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Games\BoundaryEdge.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

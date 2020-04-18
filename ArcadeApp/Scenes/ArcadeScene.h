@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "ButtonOptionsScene.h"
+#include "Graphics/AnimatedSprite.h"
 
 enum eGame
 {
@@ -25,5 +26,4 @@ public:
 
 private:
 	std::unique_ptr<Scene> GetScene(eGame game);
-
 };

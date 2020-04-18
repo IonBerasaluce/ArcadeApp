@@ -3,7 +3,7 @@
 #include "Graphics/Screen.h"
 #include "Graphics/Colour.h"
 #include "Shapes/Circle.h"
-#include "BoundaryEdge.h"
+#include "Games/BoundaryEdge.h"
 
 const float Ball::RADIUS = 5.0f;
 

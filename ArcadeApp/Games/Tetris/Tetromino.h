@@ -48,7 +48,6 @@ public:
 	inline void SetYMovementDirection(YBlockDirection dir) { m_YDirection = dir; }
 	inline void SetPieceRotation(const uint8_t rotation) { m_Rotation = rotation; }
 	
-	const bool IsValidPosition(const Vec2D& dPosition, int rotation);
 	std::vector<AARectangle> GetSignificantBlocks() const;
 
 	int FindRotatedIndex(int index, int r);

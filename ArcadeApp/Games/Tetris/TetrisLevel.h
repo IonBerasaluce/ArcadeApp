@@ -20,13 +20,14 @@ public:
 	~TetrisLevel() {};
 
 	void Init(const Vec2D& startPosition);
-	void Update(uint32_t dt);
-	void Draw(Screen& theScreen);
+	void Update(uint32_t dt, int& score);
+	void Draw(Screen& theScreen, int level, int score);
 
 	void AddPiece(const Tetromino& newPiece);
 	bool DoesPieceFit(Tetromino pieceToFit, const Vec2D& vector, int rotation);
 
 	inline const AARectangle GetLevelBoundary() const { return m_LevelBoundary; }
+	inline const int GetCompletedLines() const { return m_Lines; }
 
 private:
 
