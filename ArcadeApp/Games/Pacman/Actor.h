@@ -14,6 +14,8 @@ class SpriteSheet;
 class Actor
 {
 public:
+
+	virtual ~Actor() {}
 	virtual void Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Vec2D& initialPos, uint32_t movementSpeed, bool updateSpriteOnMovement, const Colour& spriteColour = Colour::White());
 	
 	virtual void Update(uint32_t dt);
@@ -23,7 +25,7 @@ public:
 
 	AARectangle GetEatingBoundingBox() const;
 
-	inline bool IsFinishedanimation() const { return m_Sprite.IsFinishedPlayingAnimation(); }
+	inline bool IsFinishedAnimation() const { return m_Sprite.IsFinishedPlayingAnimation(); }
 	inline const AARectangle GetBoundingBox() const { return m_Sprite.GetBoundingBox(); }
 	inline void MoveBy(const Vec2D& delta) { m_Sprite.MoveBy(delta); }
 	inline void MoveTo(const Vec2D& position) { m_Sprite.SetPosition(position); }

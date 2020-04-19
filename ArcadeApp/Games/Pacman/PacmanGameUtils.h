@@ -3,6 +3,9 @@
 #include "Math/Vec2D.h"
 #include <vector>
 
+
+static const int PACMAN_MOVEMENT_SPEED = 50;
+
 enum PacmanMovement
 {
 	PACMAN_MOVE_NONE = 0,

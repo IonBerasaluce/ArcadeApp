@@ -1,5 +1,7 @@
 #include "Pacman.h"
 #include "App/App.h"
+#include "PacmanGameUtils.h"
+#include "Inputs/GameController.h"
 
 /*
 - Pacman
@@ -49,21 +51,100 @@
 
 void Pacman::Init(GameController& controller)
 {
+	m_PacmanSpriteSheet.Load("PacmanSprites");
+	std::string animationsPath = App::Singleton().GetBasePath() + "Assets\\Pacman_animations.txt";
+
 	m_Level.Init(App::Singleton().GetBasePath() + "Assets\\Pacman_level.txt");
+
+	m_Pacman.Init(m_PacmanSpriteSheet, animationsPath, Vec2D::Zero, PACMAN_MOVEMENT_SPEED, false);
+
+	ResetGame();
+
+	//Set up the Game controller actions
+	ButtonAction leftAction;
+	leftAction.key = GameController::LeftKey();
+	leftAction.action = [this](uint32_t dt, InputState state)
+	{
+		HandleGameControllerState(dt, state, PACMAN_MOVE_LEFT);
+	};
+
+	controller.AddInputActionForKey(leftAction);
+
+	//Set up the Game controller actions
+	ButtonAction rightAction;
+	rightAction.key = GameController::RightKey();
+	rightAction.action = [this](uint32_t dt, InputState state)
+	{
+		HandleGameControllerState(dt, state, PACMAN_MOVE_RIGHT);
+	};
+
+	controller.AddInputActionForKey(rightAction);
+
+	//Set up the Game controller actions
+	ButtonAction upAction;
+	upAction.key = GameController::UpKey();
+	upAction.action = [this](uint32_t dt, InputState state)
+	{
+		HandleGameControllerState(dt, state, PACMAN_MOVE_UP);
+	};
+
+	controller.AddInputActionForKey(upAction);
+
+	//Set up the Game controller actions
+	ButtonAction downAction;
+	downAction.key = GameController::DownKey();
+	downAction.action = [this](uint32_t dt, InputState state)
+	{
+		HandleGameControllerState(dt, state, PACMAN_MOVE_DOWN);
+	};
+
+	controller.AddInputActionForKey(downAction);
+
 }
 
 void Pacman::Update(uint32_t dt)
 {
 	m_Level.Update(dt);
+	UpdatePacmanMovement();
+	m_Pacman.Update(dt);
 }
 
 void Pacman::Draw(Screen& screen)
 {
 	m_Level.Draw(screen);
+	m_Pacman.Draw(screen);
 }
 
 const std::string& Pacman::GetName() const
 {
 	static std::string name = "Pacman!";
 	return name;
+}
+
+void Pacman::ResetGame()
+{
+	m_PressedDirection = PACMAN_MOVE_NONE;
+	m_Pacman.ResetScore();
+}
+
+void Pacman::UpdatePacmanMovement()
+{
+	if (m_PressedDirection != PACMAN_MOVE_NONE)
+	{
+		m_Pacman.SetMovementDirection(m_PressedDirection);
+	}
+
+}
+
+void Pacman::HandleGameControllerState(uint32_t dt, InputState state, PacmanMovement direction)
+{
+	if (GameController::IsPressed(state))
+	{
+		m_PressedDirection = direction;
+	}
+	else if (GameController::IsReleased(state) && m_PressedDirection == direction)
+	{
+		m_PressedDirection = PACMAN_MOVE_NONE;
+	}
+
 }

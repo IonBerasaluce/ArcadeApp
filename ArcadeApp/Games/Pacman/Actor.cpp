@@ -13,13 +13,13 @@ void Actor::Update(uint32_t dt)
 {
 	if (m_MovementDirection != PACMAN_MOVE_NONE)
 	{
-		Vec2D delta = vec2D::Zero;
+		Vec2D delta = Vec2D::Zero;
 
 		delta = GetMovementVector(m_MovementDirection) * m_MovementSpeed;
 
 		m_Delta += delta * MillisecondsToSeconds(dt);
 		
-		if (fabsf(m_Delta.GetX(0)) >= 1)
+		if (fabsf(m_Delta.GetX()) >= 1)
 		{
 			int dx = int(fabs(m_Delta.GetX()));
 			if (m_Delta.GetX() < 0)
@@ -40,7 +40,7 @@ void Actor::Update(uint32_t dt)
 			if (m_Delta.GetY() < 0)
 			{
 				m_Sprite.MoveBy(Vec2D(0, -dy));
-				m_Delta.SetY(m_Delta.GetX() + dy);
+				m_Delta.SetY(m_Delta.GetY() + dy);
 			}
 			else
 			{

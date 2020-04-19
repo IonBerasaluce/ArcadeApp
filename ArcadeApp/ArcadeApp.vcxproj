@@ -149,6 +149,7 @@
     <ClCompile Include="Games\Pacman\Pacman.cpp" />
     <ClCompile Include="Games\Pacman\PacmanGameUtils.cpp" />
     <ClCompile Include="Games\Pacman\PacmanLevel.cpp" />
+    <ClCompile Include="Games\Pacman\PacmanPlayer.cpp" />
     <ClCompile Include="Games\Tetris\Tetris.cpp" />
     <ClCompile Include="Games\Tetris\TetrisLevel.cpp" />
     <ClCompile Include="Games\Tetris\Tetromino.cpp" />
@@ -196,6 +197,7 @@
     <ClInclude Include="Games\Pacman\Pacman.h" />
     <ClInclude Include="Games\Pacman\PacmanGameUtils.h" />
     <ClInclude Include="Games\Pacman\PacmanLevel.h" />
+    <ClInclude Include="Games\Pacman\PacmanPlayer.h" />
     <ClInclude Include="Games\Tetris\Tetris.h" />
     <ClInclude Include="Games\Tetris\TetrisLevel.h" />
     <ClInclude Include="Games\Tetris\Tetromino.h" />
