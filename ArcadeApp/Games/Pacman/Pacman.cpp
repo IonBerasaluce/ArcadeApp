@@ -51,12 +51,13 @@
 
 void Pacman::Init(GameController& controller)
 {
+
 	m_PacmanSpriteSheet.Load("PacmanSprites");
 	std::string animationsPath = App::Singleton().GetBasePath() + "Assets\\Pacman_animations.txt";
+	m_Pacman.Init(m_PacmanSpriteSheet, animationsPath, Vec2D(108, 204), PACMAN_MOVEMENT_SPEED, false);
 
-	m_Level.Init(App::Singleton().GetBasePath() + "Assets\\Pacman_level.txt");
+	m_Level.Init(App::Singleton().GetBasePath() + "Assets\\Pacman_level.txt", &m_Pacman);
 
-	m_Pacman.Init(m_PacmanSpriteSheet, animationsPath, Vec2D::Zero, PACMAN_MOVEMENT_SPEED, false);
 
 	ResetGame();
 
@@ -131,9 +132,11 @@ void Pacman::UpdatePacmanMovement()
 {
 	if (m_PressedDirection != PACMAN_MOVE_NONE)
 	{
-		m_Pacman.SetMovementDirection(m_PressedDirection);
+		if (!m_Level.WillCollide(m_Pacman.GetBoundingBox(), m_PressedDirection))
+		{
+			m_Pacman.SetMovementDirection(m_PressedDirection);
+		}
 	}
-
 }
 
 void Pacman::HandleGameControllerState(uint32_t dt, InputState state, PacmanMovement direction)

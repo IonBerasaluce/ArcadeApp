@@ -23,4 +23,5 @@ private:
 	PacmanMovement m_PressedDirection;
 	SpriteSheet m_PacmanSpriteSheet;
 	PacmanPlayer m_Pacman;
+	
 };
