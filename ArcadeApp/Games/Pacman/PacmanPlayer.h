@@ -16,7 +16,7 @@ public:
 	void ResetToFirstAnimation();
 	void EatenByGhost();
 	void ResetScore();
-	void AddItem(uint32_t value);
+	void AteItem(uint32_t value);
 	void AteGhost(uint32_t value);
 
 	inline void ResetGhostEatenMultiplier() { m_GhostMultiplier = 1; }

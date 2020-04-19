@@ -69,7 +69,7 @@ void PacmanPlayer::ResetScore()
 	m_Score = 0;
 }
 
-void PacmanPlayer::AddItem(uint32_t value)
+void PacmanPlayer::AteItem(uint32_t value)
 {
 	AddToScore(value);
 }

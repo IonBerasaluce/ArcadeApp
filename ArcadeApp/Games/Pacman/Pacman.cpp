@@ -2,6 +2,7 @@
 #include "App/App.h"
 #include "PacmanGameUtils.h"
 #include "Inputs/GameController.h"
+#include "Graphics/BitMapFont.h"
 
 /*
 - Pacman
@@ -47,6 +48,10 @@
 	- Display the score
 
 */
+
+namespace {
+	const std::string SCORE_STR = "Score  ";
+}
 
 
 void Pacman::Init(GameController& controller)
@@ -114,6 +119,20 @@ void Pacman::Draw(Screen& screen)
 {
 	m_Level.Draw(screen);
 	m_Pacman.Draw(screen);
+
+	//Draw the score
+	{
+		Vec2D levelOffset = m_Level.GetLayoutOffset();
+		AARectangle highScoreRect = AARectangle(Vec2D(0, 4), App::Singleton().Width(), levelOffset.GetY());
+		
+		BitmapFont font = App::Singleton().GetFont();
+		
+		std::string scoreString = std::to_string(m_Pacman.Score());
+
+		Vec2D textDrawPosition = font.GetDrawPosition(SCORE_STR + scoreString, highScoreRect, BitmapFontXAlignment::BFXA_CENTRE, BitmapFontYAlignment::BFYA_CENTRE);
+
+		screen.Draw(font, SCORE_STR + scoreString, textDrawPosition);
+	}
 }
 
 const std::string& Pacman::GetName() const

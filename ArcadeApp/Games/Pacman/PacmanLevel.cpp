@@ -50,16 +50,35 @@ void PacmanLevel::Update(uint32_t dt)
 			}
 		}
 	}
+
+	for (auto& pellet : m_Pellets)
+	{
+		if (!pellet.eaten)
+		{
+			if (m_ptrPacmanPlayer->GetEatingBoundingBox().Intersects(pellet.m_BBox))
+			{
+				pellet.eaten = true;
+				m_ptrPacmanPlayer->AteItem(pellet.score);
+
+				if (pellet.powerPellet)
+				{
+					m_ptrPacmanPlayer->ResetGhostEatenMultiplier();
+					// TODO: Change the ghosts state to vulnerable
+				}
+			}
+		}
+	}
 }
 
 void PacmanLevel::Draw(Screen& screen)
 {
-	// Debug code for wall check
+	 //Debug code for wall check
 	for (const auto& wall : m_Walls)
 	{
 		screen.Draw(wall.GetAARectangle(), Colour::Blue());
 	}
 
+	// Drawing the pellets
 	for (const auto& pellet : m_Pellets)
 	{
 		if (!pellet.eaten)
@@ -116,13 +135,13 @@ void PacmanLevel::ResetPellets()
 	p.score = 10;
 	uint32_t row = 0;
 	
-	// Loop through the entire map
+	//// Loop through the entire map
 	for (uint32_t y = startingY; y < LEVEL_HEIGHT; y += PADDING, ++row)
 	{
 		for (uint32_t x = startingX, col = 0; x < App::Singleton().Width(); x += PADDING, ++col)
 		{
 			// Check for power pellet positions 
-			if (row == 0 || row == 22)
+			if (row == 2 || row == 22)
 			{
 				if (col == 0 || col == 25)
 				{

@@ -39,6 +39,8 @@ public:
 
 	bool WillCollide(const AARectangle& bbox, PacmanMovement direction) const;
 
+	inline Vec2D GetLayoutOffset() const { return m_LayoutOffset; }
+
 private:
 
 	bool LoadLevel(const std::string& levelPath);
