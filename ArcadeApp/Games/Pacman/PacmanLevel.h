@@ -19,6 +19,15 @@ struct Tile
 	char symbol = '-';
 	char isTeleportTile = 0;
 	char teleportToSymbol = 0;
+	int excludePelletTile = 0;
+};
+
+struct Pellet
+{
+	uint32_t score = 0;
+	AARectangle m_BBox;
+	int powerPellet = 0;
+	int eaten = 0;
 };
 
 class PacmanLevel
@@ -34,10 +43,15 @@ private:
 
 	bool LoadLevel(const std::string& levelPath);
 	Tile* GetTileForSymbol(char symbol);
+	void ResetPellets();
+	void ResetLevel();
+
 	PacmanPlayer* m_ptrPacmanPlayer;
 
 	std::vector<Excluder> m_Walls;
 	std::vector<Tile> m_Tiles;
+	std::vector<Tile> m_ExclusionTiles;
+	std::vector<Pellet> m_Pellets;
 
 	Vec2D m_LayoutOffset;
 	size_t m_TileHeight;

@@ -1,4 +1,7 @@
 #include <assert.h>
+
+#include "App/App.h"
+#include "Shapes/Circle.h"
 #include "PacmanLevel.h"
 #include "Utils/FileCommandLoader.h"
 #include "Graphics/Screen.h"
@@ -7,7 +10,14 @@
 bool PacmanLevel::Init(const std::string& levelPath, PacmanPlayer* ptrPacmanPlayer)
 {
 	m_ptrPacmanPlayer = ptrPacmanPlayer;
-	return LoadLevel(levelPath);
+
+	bool levelLoaded = LoadLevel(levelPath);
+	if (levelLoaded)
+	{
+		ResetLevel();
+	}
+
+	return levelLoaded;
 }
 
 void PacmanLevel::Update(uint32_t dt)
@@ -49,6 +59,22 @@ void PacmanLevel::Draw(Screen& screen)
 	{
 		screen.Draw(wall.GetAARectangle(), Colour::Blue());
 	}
+
+	for (const auto& pellet : m_Pellets)
+	{
+		if (!pellet.eaten)
+		{
+			if (!pellet.powerPellet)
+			{
+				screen.Draw(pellet.m_BBox, Colour::White());
+			}
+			else
+			{
+				Circle c(pellet.m_BBox.GetCenterPoint(), pellet.m_BBox.GetWidth() / 2.0f);
+				screen.Draw(c, Colour::White(), true, Colour::White());
+			}
+		}
+	}
 }
 
 bool PacmanLevel::WillCollide(const AARectangle& aBBox, PacmanMovement direction) const
@@ -66,6 +92,91 @@ bool PacmanLevel::WillCollide(const AARectangle& aBBox, PacmanMovement direction
 		}
 	}
 	return false;
+}
+
+void PacmanLevel::ResetLevel()
+{
+	ResetPellets();
+}
+
+void PacmanLevel::ResetPellets()
+{
+	m_Pellets.clear();
+
+	// TODO: clean up this mess of constants
+	const uint32_t PELLET_SIZE = 2; 
+	const uint32_t PADDING = static_cast<uint32_t>(m_TileHeight);
+
+	uint32_t startingY = m_LayoutOffset.GetY() + PADDING + m_TileHeight - 1;
+	uint32_t startingX = PADDING + 3;
+
+	const uint32_t LEVEL_HEIGHT = m_LayoutOffset.GetY() + 32 * m_TileHeight;
+	
+	Pellet p; 
+	p.score = 10;
+	uint32_t row = 0;
+	
+	// Loop through the entire map
+	for (uint32_t y = startingY; y < LEVEL_HEIGHT; y += PADDING, ++row)
+	{
+		for (uint32_t x = startingX, col = 0; x < App::Singleton().Width(); x += PADDING, ++col)
+		{
+			// Check for power pellet positions 
+			if (row == 0 || row == 22)
+			{
+				if (col == 0 || col == 25)
+				{
+					p.powerPellet = 1;
+					p.score = 0;
+					p.m_BBox = AARectangle(Vec2D(x - 3, y - 3), m_TileHeight, m_TileHeight);
+					m_Pellets.push_back(p);
+
+					p.powerPellet = 0;
+					p.score = 10;
+
+					continue;
+				}
+			}
+
+			// Make a pellet
+			AARectangle rect = AARectangle(Vec2D(x, y), PELLET_SIZE, PELLET_SIZE);
+
+			bool found = false;
+
+			// Check that we are not hitting any walls
+			for (const Excluder& wall : m_Walls)
+			{
+				if (wall.GetAARectangle().Intersects(rect))
+				{
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+			{
+				// Check that we are not in the excluded tiles
+				for (const Tile& excludePelletTile : m_ExclusionTiles)
+				{
+					if (excludePelletTile.excludePelletTile)
+					{
+						AARectangle tileAABB(excludePelletTile.position, excludePelletTile.width, excludePelletTile.width);
+
+						if (tileAABB.Intersects(rect))
+						{
+							found = true;
+							break;
+						}
+					}
+				}
+			}
+			// If the position is not a wall nor a teleport tile we can place pellet 
+			if (!found)
+			{
+				p.m_BBox = rect;
+				m_Pellets.push_back(p);
+			}
+		}
+	}
 }
 
 bool PacmanLevel::LoadLevel(const std::string& levelPath)
@@ -129,6 +240,15 @@ bool PacmanLevel::LoadLevel(const std::string& levelPath)
 
 	fileLoader.AddCommand(layoutOffsetCommand);
 
+	Command tileExcludePelletCommand;
+	tileExcludePelletCommand.command = "tile_exclude_pellet";
+	tileExcludePelletCommand.parseFunc = [this](ParseFunctionParams params)
+	{
+		m_Tiles.back().excludePelletTile = FileCommandLoader::ReadInt(params);
+	};
+
+	fileLoader.AddCommand(tileExcludePelletCommand);
+
 	// Teleporting tiles
 	Command tileToTeleportToCommand;
 	tileToTeleportToCommand.command = "tile_teleport_to_symbol";
@@ -180,6 +300,11 @@ bool PacmanLevel::LoadLevel(const std::string& levelPath)
 					wall.Init(AARectangle(Vec2D(startingX, layoutOffset.GetY()), tile->width, static_cast<unsigned int>(m_TileHeight)));
 
 					m_Walls.push_back(wall);
+				}
+
+				if (tile->excludePelletTile > 0)
+				{
+					m_ExclusionTiles.push_back(*tile);
 				}
 
 				startingX += tile->width;
