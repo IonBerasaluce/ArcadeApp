@@ -25,7 +25,7 @@ public:
 	bool Intersects(const AARectangle& otherRect) const;
 	bool ContainsPoint(const Vec2D& p) const;
 
-	static AARectangle Inset(const AARectangle& rect, Vec2D& insets);
+	static AARectangle Inset(const AARectangle& rect, const Vec2D& insets);
 
 	void PrintCoordinates() const;
 

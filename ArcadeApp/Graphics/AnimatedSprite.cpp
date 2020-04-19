@@ -47,7 +47,7 @@ Vec2D AnimatedSprite::Size() const
 	return m_AnimationPlayer.GetCurrentAnimationFrame().size;
 }
 
-void AnimatedSprite::Pause()
+void AnimatedSprite::Stop()
 {
 	m_AnimationPlayer.Stop();
 }

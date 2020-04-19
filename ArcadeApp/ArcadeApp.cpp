@@ -1,9 +1,3 @@
-#include <iostream>
-#include "SDL.h"
-#include "Graphics/Colour.h"
-#include "Graphics/ScreenBuffer.h"
-#include "Graphics/Screen.h"
-#include "Shapes/Line2D.h"
 #include "App/App.h"
 
 const int SCREEN_WIDTH = 224;

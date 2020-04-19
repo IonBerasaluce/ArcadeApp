@@ -27,7 +27,7 @@ Screen::~Screen()
 	if (m_PixelFormat)
 	{
 		SDL_FreeFormat(m_PixelFormat);
-		m_PixelFormat = nullptr;
+		m_PixelFormat = nullptr;\
 	}
 
 	if (m_Texture)

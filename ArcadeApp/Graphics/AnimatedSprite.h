@@ -19,7 +19,7 @@ public:
 
 	void SetAnimation(const std::string& animationName, bool looped);
 	Vec2D Size() const;
-	void Pause();
+	void Stop();
 	const AARectangle GetBoundingBox() const;
 
 	inline Vec2D Position() const { return m_Position; }
