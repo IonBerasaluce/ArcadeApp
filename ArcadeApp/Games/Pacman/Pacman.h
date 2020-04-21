@@ -14,6 +14,8 @@ public:
 	virtual void Draw(Screen& screen) override;
 	virtual const std::string& GetName() const override;
 
+	void DrawLives(Screen& screen);
+
 private:
 	void ResetGame();
 	void UpdatePacmanMovement();
@@ -23,5 +25,7 @@ private:
 	PacmanMovement m_PressedDirection;
 	SpriteSheet m_PacmanSpriteSheet;
 	PacmanPlayer m_Pacman;
+
+	size_t m_NumLives;
 	
 };

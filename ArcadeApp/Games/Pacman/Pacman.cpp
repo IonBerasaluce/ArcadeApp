@@ -51,6 +51,8 @@
 
 namespace {
 	const std::string SCORE_STR = "Score  ";
+	const std::string PACMAN_LIFE_SPRITE_NAME = "pac_man_left_idle";
+	const size_t MAX_NUM_LIVES = 3;
 }
 
 
@@ -59,9 +61,9 @@ void Pacman::Init(GameController& controller)
 
 	m_PacmanSpriteSheet.Load("PacmanSprites");
 	std::string animationsPath = App::Singleton().GetBasePath() + "Assets\\Pacman_animations.txt";
-	m_Pacman.Init(m_PacmanSpriteSheet, animationsPath, Vec2D(108, 204), PACMAN_MOVEMENT_SPEED, false);
+	m_Pacman.Init(m_PacmanSpriteSheet, animationsPath, Vec2D::Zero, PACMAN_MOVEMENT_SPEED, false);
 
-	m_Level.Init(App::Singleton().GetBasePath() + "Assets\\Pacman_level.txt", &m_Pacman);
+	m_Level.Init(App::Singleton().GetBasePath() + "Assets\\Pacman_level.txt", &m_PacmanSpriteSheet, &m_Pacman);
 
 
 	ResetGame();
@@ -113,6 +115,11 @@ void Pacman::Update(uint32_t dt)
 	m_Level.Update(dt);
 	UpdatePacmanMovement();
 	m_Pacman.Update(dt);
+
+	if (m_Level.IsLevelOver())
+	{
+		m_Level.IncreaseLevel();
+	}
 }
 
 void Pacman::Draw(Screen& screen)
@@ -133,6 +140,8 @@ void Pacman::Draw(Screen& screen)
 
 		screen.Draw(font, SCORE_STR + scoreString, textDrawPosition);
 	}
+
+	DrawLives(screen);
 }
 
 const std::string& Pacman::GetName() const
@@ -141,10 +150,26 @@ const std::string& Pacman::GetName() const
 	return name;
 }
 
+void Pacman::DrawLives(Screen& screen)
+{
+	const uint32_t X_PAD = 1;
+	Sprite sprite = m_PacmanSpriteSheet.GetSprite(PACMAN_LIFE_SPRITE_NAME);
+
+	uint32_t xPos = X_PAD;
+
+	for (int i = 0; i < m_NumLives; i++)
+	{
+		screen.Draw(m_PacmanSpriteSheet, PACMAN_LIFE_SPRITE_NAME, Vec2D(xPos, App::Singleton().Height() - sprite.height));
+		xPos += X_PAD + sprite.width;
+	}
+}
+
 void Pacman::ResetGame()
 {
+	m_NumLives = MAX_NUM_LIVES;
 	m_PressedDirection = PACMAN_MOVE_NONE;
 	m_Pacman.ResetScore();
+	m_Level.ResetToFirstLevel();
 }
 
 void Pacman::UpdatePacmanMovement()

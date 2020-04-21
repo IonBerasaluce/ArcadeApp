@@ -2,10 +2,12 @@
 
 #include <string>
 #include <vector>
+#include <random>
 
 #include "Math/Vec2D.h"
 #include "Games/Excluder.h"
 #include "PacmanGameUtils.h"
+#include "Graphics/SpriteSheet.h"
 
 class Screen;
 class PacmanPlayer;
@@ -18,8 +20,10 @@ struct Tile
 	int collidable = 0;
 	char symbol = '-';
 	char isTeleportTile = 0;
+	int pacmanSpawnPoint = 0;
 	char teleportToSymbol = 0;
 	int excludePelletTile = 0;
+	int itemSpawnPoint = 0;
 };
 
 struct Pellet
@@ -30,31 +34,69 @@ struct Pellet
 	int eaten = 0;
 };
 
+struct BonusItem
+{
+	uint32_t score = 0;
+	AARectangle bbox;
+	int eaten = 0;
+	int spawned = 0;
+	int spawnedTime = 1;
+};
+
+struct BonusItemLevelProperties
+{
+	uint32_t score = 0;
+	std::string spriteName = "";
+	// which level does this item spawn at
+	uint32_t begin = 0;
+	uint32_t end = 0;
+	
+};
+
 class PacmanLevel
 {
 public:
-	bool Init(const std::string& levelPath, PacmanPlayer* ptrPacmanPlayer);
+	bool Init(const std::string& levelPath, const SpriteSheet* ptrSpriteSheet, PacmanPlayer* ptrPacmanPlayer);
 	void Update(uint32_t dt);
 	void Draw(Screen& screen);
 
 	bool WillCollide(const AARectangle& bbox, PacmanMovement direction) const;
 
 	inline Vec2D GetLayoutOffset() const { return m_LayoutOffset; }
+	inline Vec2D GetPacmanSpawnLocation() const { return m_PacmanSpawnLocation; }
+	void ResetLevel();
+
+	bool IsLevelOver() const;
+	void IncreaseLevel();
+	void ResetToFirstLevel();
 
 private:
 
 	bool LoadLevel(const std::string& levelPath);
 	Tile* GetTileForSymbol(char symbol);
 	void ResetPellets();
-	void ResetLevel();
+	bool HasEatenAllPellets() const;
+
+	void GetBonusItemsSpriteName(std::string& spriteName, uint32_t& score) const;
+	void SpawnBonusItem();
+	bool ShouldSpawnBonusItem() const;
+
+	size_t NumPelletsEaten() const;
 
 	PacmanPlayer* m_ptrPacmanPlayer;
+	int m_CurrentLevel;
+
+	std::default_random_engine m_Generator;
+	BonusItem m_BonusItem;
+	std::string m_BonusItemSpriteName;
+	const SpriteSheet* m_ptrSpriteSheet;
+	std::vector<BonusItemLevelProperties> m_BonusItemProperties;
 
 	std::vector<Excluder> m_Walls;
 	std::vector<Tile> m_Tiles;
 	std::vector<Tile> m_ExclusionTiles;
 	std::vector<Pellet> m_Pellets;
-
+	Vec2D m_PacmanSpawnLocation;
 	Vec2D m_LayoutOffset;
 	size_t m_TileHeight;
 };
