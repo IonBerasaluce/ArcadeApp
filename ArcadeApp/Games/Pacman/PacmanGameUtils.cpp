@@ -69,3 +69,18 @@ std::vector<PacmanMovement> GetPerpendicularMovements(PacmanMovement direction)
 
 	return perpendicularDirections;
 }
+
+std::vector<PacmanMovement> GetOtherDirections(PacmanMovement direction)
+{
+	std::vector<PacmanMovement> directions;
+
+	for (int dir = PacmanMovement::PACMAN_MOVE_NONE + 1; dir <= PacmanMovement::PACMAN_MOVE_RIGHT; ++ dir)
+	{
+		if (dir != direction)
+		{
+			directions.push_back(static_cast<PacmanMovement> (dir));
+		}
+	}
+
+	return directions;
+}

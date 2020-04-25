@@ -5,6 +5,7 @@
 #include "Graphics/SpriteSheet.h"
 #include "Inputs/InputAction.h"
 #include "Ghost.h"
+#include "GhostAI.h"
 
 
 class Pacman: public Game
@@ -24,7 +25,9 @@ private:
 
 	void UpdatePacmanMovement();
 	void HandleGameControllerState(uint32_t dt, InputState state, PacmanMovement direction);
+	
 	std::vector<Ghost> m_Ghosts;
+	std::vector<GhostAI> m_GhostAI;
 
 	PacmanLevel m_Level;
 	PacmanMovement m_PressedDirection;

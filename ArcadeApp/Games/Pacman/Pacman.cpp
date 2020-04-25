@@ -116,6 +116,19 @@ void Pacman::Update(uint32_t dt)
 
 	for (size_t i = 0; i < NUM_GHOSTS; i++)
 	{
+		if (static_cast<GhostName>(i) == BLINKY)
+		{
+			GhostAI& ghostAI = m_GhostAI[i];
+
+			auto direction = ghostAI.Update(dt, m_Pacman, m_Level, m_Ghosts);
+
+			// So long as the new direction is not where he was going before update it
+			if (m_Ghosts[i].CanChangeDirection() && direction != m_Ghosts[i].GetMovementDirection())
+			{
+				m_Ghosts[i].SetMovementDirection(direction);
+			}
+		}
+		
 		m_Ghosts[i].Update(dt);
 	}
 
@@ -136,6 +149,11 @@ void Pacman::Draw(Screen& screen)
 	for (size_t i = 0; i < NUM_GHOSTS; i++)
 	{
 		m_Ghosts[i].Draw(screen);
+	}
+
+	for (auto& ghostAI : m_GhostAI)
+	{
+		ghostAI.Draw(screen);
 	}
 
 	//Draw the score
@@ -177,13 +195,25 @@ void Pacman::DrawLives(Screen& screen)
 
 void Pacman::SetUpGhosts()
 {
+	const Vec2D BLINKY_SCATTER_POS = Vec2D(App::Singleton().Width() - 24, 0);
+	const Vec2D INKY_SCATTER_POS = Vec2D(App::Singleton().Width(), App::Singleton().Height());
+	const Vec2D PINKY_SCATTER_POS = Vec2D(24, 0);
+	const Vec2D CLYDE_SCATTER_POS = Vec2D(0, App::Singleton().Height());
+
+
 	m_Ghosts.resize(NUM_GHOSTS);
 	std::string path = App::Singleton().GetBasePath() + "Assets\\Ghost_animations.txt";
+	//temp doing one ghost at a time for now
+	m_GhostAI.resize(1);
 
 	Ghost blinky;
 	blinky.Init(m_PacmanSpriteSheet, path, m_Level.GhostSpawnPoints()[BLINKY], GHOST_MOVEMENT_SPEED, true, Colour::Red());
 	blinky.SetMovementDirection(PACMAN_MOVE_LEFT);
 	m_Ghosts[BLINKY] = blinky;
+
+	auto blinkyAI = GhostAI();
+	blinkyAI.Init(m_Ghosts[BLINKY], blinky.GetBoundingBox().GetWidth(), BLINKY_SCATTER_POS, BLINKY);
+	m_GhostAI[BLINKY] = blinkyAI;
 
 	Ghost inky;
 	inky.Init(m_PacmanSpriteSheet, path, m_Level.GhostSpawnPoints()[INKY], GHOST_MOVEMENT_SPEED, true, Colour::Cyan());

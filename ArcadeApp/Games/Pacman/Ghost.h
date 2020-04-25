@@ -41,10 +41,11 @@ public:
 	void ResetToFirstPosition();
 
 	inline bool IsDead() const { return m_State == GHOST_STATE_DEAD; }
-	inline bool IsVulnerable() const { return m_State == GHOST_STATE_VULERABLE || GHOST_STATE_VULNERABLE_ENDING; }
+	inline bool IsVulnerable() const { return m_State == GHOST_STATE_VULERABLE || m_State == GHOST_STATE_VULNERABLE_ENDING; }
 	inline bool  IsAlive() const { return m_State == GHOST_STATE_ALIVE; }
 	inline uint32_t GetPoints() const { return m_Points; }
 	inline void LockCanChangeDirection() { m_CanChangeDirection = false; }
+	inline bool CanChangeDirection() const { return m_CanChangeDirection; }
 
 private:
 
