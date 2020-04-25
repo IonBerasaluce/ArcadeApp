@@ -11,6 +11,7 @@
 
 class Screen;
 class PacmanPlayer;
+class Ghost;
 
 struct Tile
 {
@@ -24,6 +25,11 @@ struct Tile
 	char teleportToSymbol = 0;
 	int excludePelletTile = 0;
 	int itemSpawnPoint = 0;
+
+	int blinkySpawnPoint = 0;
+	int inkySpawnPoint = 0;
+	int pinkySpawnPoint = 0;
+	int clydeSpawnPoint = 0;
 };
 
 struct Pellet
@@ -56,8 +62,8 @@ struct BonusItemLevelProperties
 class PacmanLevel
 {
 public:
-	bool Init(const std::string& levelPath, const SpriteSheet* ptrSpriteSheet, PacmanPlayer* ptrPacmanPlayer);
-	void Update(uint32_t dt);
+	bool Init(const std::string& levelPath, const SpriteSheet* ptrSpriteSheet);
+	void Update(uint32_t dt, PacmanPlayer& pacman, std::vector<Ghost>& ghosts);
 	void Draw(Screen& screen);
 
 	bool WillCollide(const AARectangle& bbox, PacmanMovement direction) const;
@@ -69,6 +75,8 @@ public:
 	bool IsLevelOver() const;
 	void IncreaseLevel();
 	void ResetToFirstLevel();
+
+	inline const std::vector<Vec2D>& GhostSpawnPoints() { return m_GhostSpawnPoints; }
 
 private:
 
@@ -83,7 +91,6 @@ private:
 
 	size_t NumPelletsEaten() const;
 
-	PacmanPlayer* m_ptrPacmanPlayer;
 	int m_CurrentLevel;
 
 	std::default_random_engine m_Generator;
@@ -96,6 +103,8 @@ private:
 	std::vector<Tile> m_Tiles;
 	std::vector<Tile> m_ExclusionTiles;
 	std::vector<Pellet> m_Pellets;
+	std::vector<Vec2D> m_GhostSpawnPoints;
+
 	Vec2D m_PacmanSpawnLocation;
 	Vec2D m_LayoutOffset;
 	size_t m_TileHeight;

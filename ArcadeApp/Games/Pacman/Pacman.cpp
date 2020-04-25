@@ -63,8 +63,7 @@ void Pacman::Init(GameController& controller)
 	std::string animationsPath = App::Singleton().GetBasePath() + "Assets\\Pacman_animations.txt";
 	m_Pacman.Init(m_PacmanSpriteSheet, animationsPath, Vec2D::Zero, PACMAN_MOVEMENT_SPEED, false);
 
-	m_Level.Init(App::Singleton().GetBasePath() + "Assets\\Pacman_level.txt", &m_PacmanSpriteSheet, &m_Pacman);
-
+	m_Level.Init(App::Singleton().GetBasePath() + "Assets\\Pacman_level.txt", &m_PacmanSpriteSheet);
 
 	ResetGame();
 
@@ -112,13 +111,20 @@ void Pacman::Init(GameController& controller)
 
 void Pacman::Update(uint32_t dt)
 {
-	m_Level.Update(dt);
 	UpdatePacmanMovement();
 	m_Pacman.Update(dt);
+
+	for (size_t i = 0; i < NUM_GHOSTS; i++)
+	{
+		m_Ghosts[i].Update(dt);
+	}
+
+	m_Level.Update(dt, m_Pacman, m_Ghosts);
 
 	if (m_Level.IsLevelOver())
 	{
 		m_Level.IncreaseLevel();
+		ResetPacman();
 	}
 }
 
@@ -126,6 +132,11 @@ void Pacman::Draw(Screen& screen)
 {
 	m_Level.Draw(screen);
 	m_Pacman.Draw(screen);
+
+	for (size_t i = 0; i < NUM_GHOSTS; i++)
+	{
+		m_Ghosts[i].Draw(screen);
+	}
 
 	//Draw the score
 	{
@@ -164,12 +175,47 @@ void Pacman::DrawLives(Screen& screen)
 	}
 }
 
+void Pacman::SetUpGhosts()
+{
+	m_Ghosts.resize(NUM_GHOSTS);
+	std::string path = App::Singleton().GetBasePath() + "Assets\\Ghost_animations.txt";
+
+	Ghost blinky;
+	blinky.Init(m_PacmanSpriteSheet, path, m_Level.GhostSpawnPoints()[BLINKY], GHOST_MOVEMENT_SPEED, true, Colour::Red());
+	blinky.SetMovementDirection(PACMAN_MOVE_LEFT);
+	m_Ghosts[BLINKY] = blinky;
+
+	Ghost inky;
+	inky.Init(m_PacmanSpriteSheet, path, m_Level.GhostSpawnPoints()[INKY], GHOST_MOVEMENT_SPEED, true, Colour::Cyan());
+	inky.SetMovementDirection(PACMAN_MOVE_UP);
+	m_Ghosts[INKY] = inky;
+
+	Ghost pinky;
+	pinky.Init(m_PacmanSpriteSheet, path, m_Level.GhostSpawnPoints()[PINKY], GHOST_MOVEMENT_SPEED, true, Colour::Pink());
+	pinky.SetMovementDirection(PACMAN_MOVE_DOWN);
+	m_Ghosts[PINKY] = pinky;
+
+	Ghost clyde;
+	clyde.Init(m_PacmanSpriteSheet, path, m_Level.GhostSpawnPoints()[CLYDE], GHOST_MOVEMENT_SPEED, true, Colour::Orange());
+	clyde.SetMovementDirection(PACMAN_MOVE_UP);
+	m_Ghosts[CLYDE] = clyde;
+}
+
 void Pacman::ResetGame()
 {
 	m_NumLives = MAX_NUM_LIVES;
 	m_PressedDirection = PACMAN_MOVE_NONE;
+
+	SetUpGhosts();
 	m_Pacman.ResetScore();
 	m_Level.ResetToFirstLevel();
+	ResetPacman();
+}
+
+void Pacman::ResetPacman()
+{
+	m_Pacman.MoveTo(m_Level.GetPacmanSpawnLocation());
+	m_Pacman.ResetToFirstAnimation();
 }
 
 void Pacman::UpdatePacmanMovement()

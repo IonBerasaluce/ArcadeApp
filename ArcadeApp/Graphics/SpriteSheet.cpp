@@ -18,7 +18,7 @@ bool SpriteSheet::Load(const std::string& name)
 Sprite SpriteSheet::GetSprite(const std::string& spriteName) const
 {
 	size_t length = m_Sections.size();
-	for (size_t i = 0; i < length; i++)
+	for (size_t i = 0; i < length; ++i)
 	{
 		if (StringCompare(m_Sections[i].key, spriteName))
 		{

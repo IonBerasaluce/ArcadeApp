@@ -103,7 +103,6 @@ std::vector<Animation> Animation::LoadAnimations(const std::string& animationFil
 
 	Command overlayCommand;
 	overlayCommand.command = "overlay";
-	overlayCommand.commandType = COMMAND_MULTI_LINE;
 	overlayCommand.parseFunc = [&](ParseFunctionParams params)
 	{
 		animations.back().SetOverlay(FileCommandLoader::ReadString(params));

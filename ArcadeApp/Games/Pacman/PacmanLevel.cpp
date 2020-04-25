@@ -6,6 +6,7 @@
 #include "Utils/FileCommandLoader.h"
 #include "Graphics/Screen.h"
 #include "PacmanPlayer.h"
+#include "Ghost.h"
 
 namespace {
 	const uint32_t NUM_LEVELS = 256;
@@ -13,16 +14,18 @@ namespace {
 	const uint32_t SPRITE_WIDTH = 16;
 }
 
-bool PacmanLevel::Init(const std::string& levelPath, const SpriteSheet* ptrSpriteSheet, PacmanPlayer* ptrPacmanPlayer)
+bool PacmanLevel::Init(const std::string& levelPath, const SpriteSheet* ptrSpriteSheet)
 {
-	m_ptrPacmanPlayer = ptrPacmanPlayer;
 	m_CurrentLevel = 0;
 	m_ptrSpriteSheet = ptrSpriteSheet;
 	m_BonusItemSpriteName = "";
 	std::random_device r;
 	m_Generator.seed(r());
 
+	m_GhostSpawnPoints.resize(NUM_GHOSTS);
+
 	bool levelLoaded = LoadLevel(levelPath);
+
 	if (levelLoaded)
 	{
 		ResetLevel();
@@ -31,17 +34,30 @@ bool PacmanLevel::Init(const std::string& levelPath, const SpriteSheet* ptrSprit
 	return levelLoaded;
 }
 
-void PacmanLevel::Update(uint32_t dt)
+void PacmanLevel::Update(uint32_t dt, PacmanPlayer& pacman, std::vector<Ghost>& ghosts)
 {
 	for (const auto& wall : m_Walls)
 	{
+		// handling of player collisions
 		BoundaryEdge edge;
-		if (wall.HasCollided(m_ptrPacmanPlayer->GetBoundingBox(), edge))
+		if (wall.HasCollided(pacman.GetBoundingBox(), edge))
 		{
-			Vec2D offset = wall.GetCollisionOffset(m_ptrPacmanPlayer->GetBoundingBox());
-			m_ptrPacmanPlayer->MoveBy(offset);
+			Vec2D offset = wall.GetCollisionOffset(pacman.GetBoundingBox());
+			pacman.MoveBy(offset);
 			// If pacman collides with a wall we stop him
-			m_ptrPacmanPlayer->Stop();
+			pacman.Stop();
+		}
+
+		// Handle ghosts collision
+		for (auto& ghost : ghosts)
+		{
+			if (wall.HasCollided(ghost.GetBoundingBox(), edge))
+			{
+				Vec2D offset = wall.GetCollisionOffset(ghost.GetBoundingBox());
+				ghost.MoveBy(offset);
+				// If pacman collides with a wall we stop him
+				ghost.Stop();
+			}
 		}
 	}
 
@@ -55,9 +71,20 @@ void PacmanLevel::Update(uint32_t dt)
 			Tile* teleportToTile = GetTileForSymbol(t.teleportToSymbol);
 			assert(teleportToTile);
 
-			if (teleportToTile->isTeleportTile && teleportTileAABB.Intersects(m_ptrPacmanPlayer->GetBoundingBox()))
+			if (teleportToTile->isTeleportTile)
 			{
-				m_ptrPacmanPlayer->MoveTo(teleportToTile->position + teleportToTile->offset);
+				if (teleportTileAABB.Intersects(pacman.GetBoundingBox()))
+				{
+					pacman.MoveTo(teleportToTile->position + teleportToTile->offset);
+				}
+
+				for (auto& ghost : ghosts)
+				{
+					if (teleportTileAABB.Intersects(ghost.GetBoundingBox()))
+					{
+						ghost.MoveTo(teleportToTile->position + teleportToTile->offset);
+					}
+				}
 			}
 		}
 	}
@@ -66,14 +93,14 @@ void PacmanLevel::Update(uint32_t dt)
 	{
 		if (!pellet.eaten)
 		{
-			if (m_ptrPacmanPlayer->GetEatingBoundingBox().Intersects(pellet.m_BBox))
+			if (pacman.GetEatingBoundingBox().Intersects(pellet.m_BBox))
 			{
 				pellet.eaten = true;
-				m_ptrPacmanPlayer->AteItem(pellet.score);
+				pacman.AteItem(pellet.score);
 
 				if (pellet.powerPellet)
 				{
-					m_ptrPacmanPlayer->ResetGhostEatenMultiplier();
+					pacman.ResetGhostEatenMultiplier();
 					// TODO: Change the ghosts state to vulnerable
 				}
 			}
@@ -87,10 +114,10 @@ void PacmanLevel::Update(uint32_t dt)
 
 	if (m_BonusItem.spawned && !m_BonusItem.eaten)
 	{
-		if (m_ptrPacmanPlayer->GetEatingBoundingBox().Intersects(m_BonusItem.bbox))
+		if (pacman.GetEatingBoundingBox().Intersects(m_BonusItem.bbox))
 		{
 			m_BonusItem.eaten = true;
-			m_ptrPacmanPlayer->AteItem(m_BonusItem.score);
+			pacman.AteItem(m_BonusItem.score);
 		}
 	}
 }
@@ -152,12 +179,6 @@ void PacmanLevel::ResetLevel()
 	m_BonusItem.spawnedTime = static_cast<int>(distribution(m_Generator));
 
 	GetBonusItemsSpriteName(m_BonusItemSpriteName, m_BonusItem.score);
-
-	if (m_ptrPacmanPlayer)
-	{
-		m_ptrPacmanPlayer->MoveTo(m_PacmanSpawnLocation);
-		m_ptrPacmanPlayer->ResetToFirstAnimation();
-	}
 }
 
 bool PacmanLevel::IsLevelOver() const
@@ -426,6 +447,42 @@ bool PacmanLevel::LoadLevel(const std::string& levelPath)
 	
 	fileLoader.AddCommand(tileItemSpawnPointCommand);
 
+	// Ghosts Spawn tiles
+	Command tileBlinkySpawnPointCommand;
+	tileBlinkySpawnPointCommand.command = "tile_blinky_spawn_point";
+	tileBlinkySpawnPointCommand.parseFunc = [this](ParseFunctionParams params)
+	{
+		m_Tiles.back().blinkySpawnPoint = FileCommandLoader::ReadInt(params);
+	};
+
+	fileLoader.AddCommand(tileBlinkySpawnPointCommand);
+
+	Command tileInkySpawnPointCommand;
+	tileInkySpawnPointCommand.command = "tile_inky_spawn_point";
+	tileInkySpawnPointCommand.parseFunc = [this](ParseFunctionParams params)
+	{
+		m_Tiles.back().inkySpawnPoint = FileCommandLoader::ReadInt(params);
+	};
+
+	fileLoader.AddCommand(tileInkySpawnPointCommand);
+
+	Command tilePinkySpawnPointCommand;
+	tilePinkySpawnPointCommand.command = "tile_pinky_spawn_point";
+	tilePinkySpawnPointCommand.parseFunc = [this](ParseFunctionParams params)
+	{
+		m_Tiles.back().pinkySpawnPoint = FileCommandLoader::ReadInt(params);
+	};
+
+	fileLoader.AddCommand(tilePinkySpawnPointCommand);
+
+	Command tileClydeSpawnPointCommand;
+	tileClydeSpawnPointCommand.command = "tile_clyde_spawn_point";
+	tileClydeSpawnPointCommand.parseFunc = [this](ParseFunctionParams params)
+	{
+		m_Tiles.back().clydeSpawnPoint = FileCommandLoader::ReadInt(params);
+	};
+
+	fileLoader.AddCommand(tileClydeSpawnPointCommand);
 
 	// entire layout
 	Command layoutCommand;
@@ -459,6 +516,22 @@ bool PacmanLevel::LoadLevel(const std::string& levelPath)
 				else if (tile->itemSpawnPoint > 0)
 				{
 					m_BonusItem.bbox = AARectangle(Vec2D(startingX + tile->offset.GetX(), layoutOffset.GetY() + tile->offset.GetY()), SPRITE_WIDTH, SPRITE_HEIGHT);
+				}
+				else if (tile->blinkySpawnPoint > 0)
+				{
+					m_GhostSpawnPoints[BLINKY] = Vec2D(startingX + tile->offset.GetX(), layoutOffset.GetY() + tile->offset.GetY());
+				}
+				else if (tile->inkySpawnPoint > 0)
+				{
+					m_GhostSpawnPoints[INKY] = Vec2D(startingX + tile->offset.GetX(), layoutOffset.GetY() + tile->offset.GetY());
+				}
+				else if (tile->pinkySpawnPoint > 0)
+				{
+					m_GhostSpawnPoints[PINKY] = Vec2D(startingX + tile->offset.GetX(), layoutOffset.GetY() + tile->offset.GetY());
+				}
+				else if (tile->clydeSpawnPoint > 0)
+				{
+					m_GhostSpawnPoints[CLYDE] = Vec2D(startingX + tile->offset.GetX(), layoutOffset.GetY() + tile->offset.GetY());
 				}
 				
 				if (tile->excludePelletTile > 0)

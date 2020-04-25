@@ -146,6 +146,7 @@
     <ClCompile Include="Games\BreakOut\LevelBoundary.cpp" />
     <ClCompile Include="Games\BreakOut\Paddle.cpp" />
     <ClCompile Include="Games\Pacman\Actor.cpp" />
+    <ClCompile Include="Games\Pacman\Ghost.cpp" />
     <ClCompile Include="Games\Pacman\Pacman.cpp" />
     <ClCompile Include="Games\Pacman\PacmanGameUtils.cpp" />
     <ClCompile Include="Games\Pacman\PacmanLevel.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="Games\BreakOut\Paddle.h" />
     <ClInclude Include="Games\Game.h" />
     <ClInclude Include="Games\Pacman\Actor.h" />
+    <ClInclude Include="Games\Pacman\Ghost.h" />
     <ClInclude Include="Games\Pacman\Pacman.h" />
     <ClInclude Include="Games\Pacman\PacmanGameUtils.h" />
     <ClInclude Include="Games\Pacman\PacmanLevel.h" />

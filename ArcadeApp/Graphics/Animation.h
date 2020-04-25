@@ -15,7 +15,7 @@ struct AnimationFrame
 
 	Vec2D size;
 	Vec2D offset = Vec2D::Zero;
-	int frameColourSet;
+	int frameColourSet = 0;
 };
 
 

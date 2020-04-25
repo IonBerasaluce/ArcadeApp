@@ -5,6 +5,9 @@
 
 
 static const int PACMAN_MOVEMENT_SPEED = 50;
+static const int GHOST_MOVEMENT_SPEED = 50;
+static const int GHOST_VULNERABLE_MOVEMENT_SPEED = 25;
+static const int GHOST_BACK_TO_PEN_SPEED = 120;
 
 enum PacmanMovement
 {

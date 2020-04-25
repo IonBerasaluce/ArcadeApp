@@ -50,6 +50,7 @@ ScreenBuffer& ScreenBuffer::operator=(const ScreenBuffer& screenBuffer)
 void ScreenBuffer::Init(uint32_t format, uint32_t width, uint32_t height)
 {
 	mSurface = SDL_CreateRGBSurfaceWithFormat(0, width, height, 0, format);
+	Clear();
 }
 
 void ScreenBuffer::Clear(const Colour& c)
@@ -65,7 +66,7 @@ void ScreenBuffer::SetPixel(const Colour& colour, int x, int y)
 {
 	assert(mSurface);
 
-	if (mSurface && (y < mSurface->h && y >= 0 && x < mSurface->w))
+	if (mSurface && (y < mSurface->h && y >= 0 && x >= 0 && x < mSurface->w))
 	{
 		SDL_LockSurface(mSurface);
 
@@ -73,7 +74,6 @@ void ScreenBuffer::SetPixel(const Colour& colour, int x, int y)
 
 		size_t index = GetIndex(y, x);
 
-		pixels[index] = colour.GetPixelColour();
 		Colour surfaceColour = Colour(pixels[index]); //destination colour
 		pixels[index] = Colour::EvaluateMinuSourceAlpha(colour, surfaceColour).GetPixelColour();
 

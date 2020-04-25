@@ -89,7 +89,7 @@ SDL_Window* Screen::Init(uint32_t w, uint32_t h, uint32_t mag, bool fast)
 			ptrWindowSurface = SDL_GetWindowSurface(ptrWindow);
 		}
 
-		m_PixelFormat = SDL_AllocFormat(SDL_GetWindowPixelFormat(ptrWindow));
+		m_PixelFormat = SDL_AllocFormat(SDL_PIXELFORMAT_ARGB8888);
 
 		if (m_Fast)
 		{
@@ -124,7 +124,7 @@ void Screen::SwapScreens()
 			{
 				SDL_Surface* surface = m_BackBuffer.GetSurface();
 
-				// Lock texture returns a pointer to the texture which we then copy into the backbuffer which then goes into the screen
+				// Lock ztexture returns a pointer to the texture which we then copy into the backbuffer which then goes into the screen
 				memcpy(textureData, surface->pixels, surface->w * surface->h * m_PixelFormat->BytesPerPixel);
 
 				SDL_UnlockTexture(m_Texture);
@@ -468,7 +468,7 @@ void Screen::FillPoly(const std::vector<Vec2D>& points, FillPolyFunc func)
 					}
 					if (nodeXVec[k + 1] > right)
 					{
-						nodeXVec[k] = right;
+						nodeXVec[k + 1] = right;
 					}
 					
 					for (int pixelX = nodeXVec[k]; pixelX < nodeXVec[k + 1]; ++pixelX)

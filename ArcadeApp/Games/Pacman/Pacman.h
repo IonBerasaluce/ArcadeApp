@@ -4,6 +4,7 @@
 #include "PacmanPlayer.h"
 #include "Graphics/SpriteSheet.h"
 #include "Inputs/InputAction.h"
+#include "Ghost.h"
 
 
 class Pacman: public Game
@@ -15,11 +16,15 @@ public:
 	virtual const std::string& GetName() const override;
 
 	void DrawLives(Screen& screen);
+	void SetUpGhosts();
 
 private:
 	void ResetGame();
+	void ResetPacman();
+
 	void UpdatePacmanMovement();
 	void HandleGameControllerState(uint32_t dt, InputState state, PacmanMovement direction);
+	std::vector<Ghost> m_Ghosts;
 
 	PacmanLevel m_Level;
 	PacmanMovement m_PressedDirection;
