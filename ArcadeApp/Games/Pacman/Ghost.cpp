@@ -38,7 +38,7 @@ void Ghost::Update(uint32_t dt)
 
 void Ghost::SetStateToVulnerable()
 {
-	if (m_State != GHOST_STATE_DEAD)
+	if (m_State != GHOST_STATE_DEAD && !IsVulnerable())
 	{
 		SetGhostState(GHOST_STATE_VULERABLE);
 	}
@@ -106,8 +106,8 @@ void Ghost::ResetToFirstPosition()
 	m_VulnerabilityTimer = 0;
 	SetGhostState(GhostState::GHOST_STATE_ALIVE);
 	m_CanChangeDirection = true;
-
 	m_IsReleased = false;
+
 	if (m_Delegate)
 	{
 		m_Delegate->GhostWasResetToFirstposition();

@@ -35,5 +35,5 @@ private:
 	PacmanPlayer m_Pacman;
 
 	size_t m_NumLives;
-	
+	uint32_t m_ReleaseGhostTimer;
 };

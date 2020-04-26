@@ -13,7 +13,7 @@ GhostAI::GhostAI()
 void GhostAI::Init(Ghost& ghost, uint32_t lookAheadDistance, const Vec2D scatterTarget, const Vec2D& ghostPenTarget, const Vec2D& ghostExitPenPosition, GhostName name)
 {
 	m_GhostPenTarget = ghostPenTarget;
-	m_GhostPenTarget = ghostExitPenPosition;
+	m_GhostExitPenPosition = ghostExitPenPosition;
 	m_ScatterTarget = scatterTarget;
 	m_LookaheadDistance = lookAheadDistance;
 	m_ptrGhost = &ghost;
@@ -160,14 +160,14 @@ void GhostAI::Draw(Screen& screen)
 	}
 }
 
-void GhostAI::GhostDelegateGhostStateChangedTo(GhostState lastState, GhostState currentState)
+void GhostAI::GhostDelegateGhostStateChangedTo(GhostState lastState, GhostState state)
 {
 	if (m_ptrGhost && m_ptrGhost->IsReleased() && (lastState == GhostState::GHOST_STATE_VULERABLE || lastState == GhostState::GHOST_STATE_VULNERABLE_ENDING) && !(IsInPen() || WantsToLeavePen()))
 	{
 		m_ptrGhost->SetMovementDirection(GetOppositeDirection(m_ptrGhost->GetMovementDirection()));
 	}
 
-	if (m_State == GhostState::GHOST_STATE_DEAD)
+	if (state == GhostState::GHOST_STATE_DEAD)
 	{
 		SetState(GhostAIState::GHOST_AI_STATE_GO_TO_PEN);
 	}
@@ -227,23 +227,22 @@ Vec2D GhostAI::GetChaseTarget(uint32_t dt, PacmanPlayer pacman, const PacmanLeve
 		{
 			// Follow pacman
 			target = pacman.GetBoundingBox().GetCenterPoint();
-			break;
 		}
+		break;
 		case PINKY:
 		{
 			// Targets 2 blocks ahead of pacman to try to ambush pacman
 			target = pacman.GetBoundingBox().GetCenterPoint() + 2 * GetMovementVector(pacman.GetMovementDirection()) * pacman.GetBoundingBox().GetWidth();
-			break;
 		}
+			break;
 		case INKY:
 		{
 			// Specfic offset from Blinky's position causing illusion of coordination between ghosts
 			Vec2D pacmanOffsetPoint = pacman.GetBoundingBox().GetCenterPoint() + (GetMovementVector(pacman.GetMovementDirection()) * pacman.GetBoundingBox().GetWidth());
 
 			target = (pacmanOffsetPoint - ghosts[BLINKY].GetBoundingBox().GetCenterPoint()) * 2 + ghosts[BLINKY].GetBoundingBox().GetCenterPoint();
-
-			break;
 		}
+			break;
 		case CLYDE:
 		{
 			// If Clyde is close to pacman he moves back to his Scatter place

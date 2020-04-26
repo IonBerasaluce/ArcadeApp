@@ -598,11 +598,11 @@ bool PacmanLevel::LoadLevel(const std::string& levelPath)
 				}
 				else if (tile->blinkySpawnPoint > 0)
 				{
-					m_GhostSpawnPoints[BLINKY] = Vec2D(startingX + tile->offset.GetX(), layoutOffset.GetY() + tile->offset.GetY());
+					m_GhostSpawnPoints[BLINKY] = Vec2D(startingX + tile->offset.GetX() + 1, layoutOffset.GetY() + tile->offset.GetY());
 				}
 				else if (tile->inkySpawnPoint > 0)
 				{
-					m_GhostSpawnPoints[INKY] = Vec2D(startingX + tile->offset.GetX(), layoutOffset.GetY() + tile->offset.GetY());
+					m_GhostSpawnPoints[INKY] = Vec2D(startingX + tile->offset.GetX() + 1, layoutOffset.GetY() + tile->offset.GetY());
 				}
 				else if (tile->pinkySpawnPoint > 0)
 				{

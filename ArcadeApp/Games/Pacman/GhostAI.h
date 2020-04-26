@@ -14,10 +14,10 @@ enum GhostAIState
 {
 	GHOST_AI_STATE_START = 0,
 	GHOST_AI_STATE_IN_PEN,
+	GHOST_AI_STATE_EXIT_PEN,
 	GHOST_AI_STATE_CHASE,
 	GHOST_AI_STATE_SCATTER,
-	GHOST_AI_STATE_GO_TO_PEN,
-	GHOST_AI_STATE_EXIT_PEN
+	GHOST_AI_STATE_GO_TO_PEN
 };
 
 class GhostAI: public GhostDelegate
@@ -30,16 +30,16 @@ public:
 	void Draw(Screen& screen);
 
 	inline bool WantsToLeavePen() const { return m_State == GHOST_AI_STATE_EXIT_PEN; }
-	inline bool IsInPen() const { return m_State == GhostAIState::GHOST_AI_STATE_IN_PEN || GhostAIState::GHOST_AI_STATE_START;}
+	inline bool IsInPen() const { return m_State == GhostAIState::GHOST_AI_STATE_IN_PEN || m_State == GhostAIState::GHOST_AI_STATE_START;}
 	inline bool IsEnteringPen() const { return m_State == GhostAIState::GHOST_AI_STATE_GO_TO_PEN; }
 
-	virtual void GhostDelegateGhostStateChangedTo(GhostState lastState, GhostState currentState) override;
+	virtual void GhostDelegateGhostStateChangedTo(GhostState lastState, GhostState state) override;
 	virtual void GhostWasReleasedFromPen() override;
 	virtual void GhostWasResetToFirstposition() override;
 
 private:
 
-	static const uint32_t PEN_WAIT_DURATION = 5000;
+	static const uint32_t PEN_WAIT_DURATION = 50;
 	static const uint32_t SCATTER_MODE_DURATION = 10000;
 
 	void SetState(GhostAIState state);
