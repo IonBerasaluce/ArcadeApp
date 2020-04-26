@@ -22,6 +22,16 @@ enum GhostState
 	GHOST_STATE_DEAD
 };
 
+// Pure virtual function and the ghost will have one of these delegates ( the AI )
+class GhostDelegate
+{
+public:
+	virtual ~GhostDelegate() {}
+	virtual void GhostDelegateGhostStateChangedTo(GhostState lastState, GhostState currentState) = 0;
+	virtual void GhostWasReleasedFromPen() = 0;
+	virtual void GhostWasResetToFirstposition() = 0;
+};
+
 class Ghost : public Actor
 {
 public:
@@ -46,14 +56,22 @@ public:
 	inline uint32_t GetPoints() const { return m_Points; }
 	inline void LockCanChangeDirection() { m_CanChangeDirection = false; }
 	inline bool CanChangeDirection() const { return m_CanChangeDirection; }
+	inline bool IsReleased() const { return m_IsReleased; }
+
+	void SetGhostDelegate(GhostDelegate& ghostDelegate) { m_Delegate = &ghostDelegate; }
+	void ReleasedFromPen();
 
 private:
-
 	void SetGhostState(GhostState state);
+
+	friend class GhostAI;
 
 	uint32_t m_VulnerabilityTimer;
 	uint32_t m_Points;
 	GhostState m_State;
 	bool m_CanChangeDirection;
+	bool m_IsReleased;
 	Vec2D m_InitialPos;
+
+	GhostDelegate* m_Delegate;
 };

@@ -8,6 +8,7 @@
 #include "Games/Excluder.h"
 #include "PacmanGameUtils.h"
 #include "Graphics/SpriteSheet.h"
+#include "GhostAI.h"
 
 class Screen;
 class PacmanPlayer;
@@ -30,6 +31,7 @@ struct Tile
 	int inkySpawnPoint = 0;
 	int pinkySpawnPoint = 0;
 	int clydeSpawnPoint = 0;
+	int isGate = 0;
 };
 
 struct Pellet
@@ -63,11 +65,11 @@ class PacmanLevel
 {
 public:
 	bool Init(const std::string& levelPath, const SpriteSheet* ptrSpriteSheet);
-	void Update(uint32_t dt, PacmanPlayer& pacman, std::vector<Ghost>& ghosts);
+	void Update(uint32_t dt, PacmanPlayer& pacman, std::vector<Ghost>& ghosts, std::vector<GhostAI>& ghostAIs);
 	void Draw(Screen& screen);
 
 	bool WillCollide(const AARectangle& bbox, PacmanMovement direction) const;
-
+	bool WillCollide(const Ghost& ghost, const GhostAI& ghostAI, PacmanMovement direction) const;
 	inline Vec2D GetLayoutOffset() const { return m_LayoutOffset; }
 	inline Vec2D GetPacmanSpawnLocation() const { return m_PacmanSpawnLocation; }
 	void ResetLevel();
@@ -104,6 +106,7 @@ private:
 	std::vector<Tile> m_ExclusionTiles;
 	std::vector<Pellet> m_Pellets;
 	std::vector<Vec2D> m_GhostSpawnPoints;
+	std::vector<Excluder> m_Gate;
 
 	Vec2D m_PacmanSpawnLocation;
 	Vec2D m_LayoutOffset;

@@ -34,7 +34,7 @@ bool PacmanLevel::Init(const std::string& levelPath, const SpriteSheet* ptrSprit
 	return levelLoaded;
 }
 
-void PacmanLevel::Update(uint32_t dt, PacmanPlayer& pacman, std::vector<Ghost>& ghosts)
+void PacmanLevel::Update(uint32_t dt, PacmanPlayer& pacman, std::vector<Ghost>& ghosts, std::vector<GhostAI>& ghostAIs)
 {
 	for (const auto& wall : m_Walls)
 	{
@@ -56,6 +56,33 @@ void PacmanLevel::Update(uint32_t dt, PacmanPlayer& pacman, std::vector<Ghost>& 
 				Vec2D offset = wall.GetCollisionOffset(ghost.GetBoundingBox());
 				ghost.MoveBy(offset);
 				// If pacman collides with a wall we stop him
+				ghost.Stop();
+			}
+		}
+	}
+
+	for (const auto& gate : m_Gate)
+	{
+		BoundaryEdge edge;
+
+		// Make sure the gate as a wall for pacman
+		if (gate.HasCollided(pacman.GetBoundingBox(), edge))
+		{
+			Vec2D offset = gate.GetCollisionOffset(pacman.GetBoundingBox());
+			pacman.MoveBy(offset);
+			pacman.Stop();
+		}
+
+		for (size_t i = 0; i < GhostName::NUM_GHOSTS; i++)
+		{
+			GhostAI& ghostAI = ghostAIs[i];
+			Ghost& ghost = ghosts[i];
+			
+			// Same as we do for pacman, if the ghosts are not meant to interact with the gate, the gate acts as a wall.
+			if (!(ghostAI.WantsToLeavePen() || ghostAI.IsEnteringPen()) && gate.HasCollided(ghost.GetBoundingBox(), edge))
+			{
+				Vec2D offset = gate.GetCollisionOffset(ghost.GetBoundingBox());
+				ghost.MoveBy(offset);
 				ghost.Stop();
 			}
 		}
@@ -89,42 +116,42 @@ void PacmanLevel::Update(uint32_t dt, PacmanPlayer& pacman, std::vector<Ghost>& 
 		}
 	}
 
-	for (auto& pellet : m_Pellets)
+for (auto& pellet : m_Pellets)
+{
+	if (!pellet.eaten)
 	{
-		if (!pellet.eaten)
+		if (pacman.GetEatingBoundingBox().Intersects(pellet.m_BBox))
 		{
-			if (pacman.GetEatingBoundingBox().Intersects(pellet.m_BBox))
+			pellet.eaten = true;
+			pacman.AteItem(pellet.score);
+
+			if (pellet.powerPellet)
 			{
-				pellet.eaten = true;
-				pacman.AteItem(pellet.score);
-
-				if (pellet.powerPellet)
-				{
-					pacman.ResetGhostEatenMultiplier();
-					// TODO: Change the ghosts state to vulnerable
-				}
+				pacman.ResetGhostEatenMultiplier();
+				// TODO: Change the ghosts state to vulnerable
 			}
-		}
-	}
-
-	if (ShouldSpawnBonusItem())
-	{
-		SpawnBonusItem();
-	}
-
-	if (m_BonusItem.spawned && !m_BonusItem.eaten)
-	{
-		if (pacman.GetEatingBoundingBox().Intersects(m_BonusItem.bbox))
-		{
-			m_BonusItem.eaten = true;
-			pacman.AteItem(m_BonusItem.score);
 		}
 	}
 }
 
+if (ShouldSpawnBonusItem())
+{
+	SpawnBonusItem();
+}
+
+if (m_BonusItem.spawned && !m_BonusItem.eaten)
+{
+	if (pacman.GetEatingBoundingBox().Intersects(m_BonusItem.bbox))
+	{
+		m_BonusItem.eaten = true;
+		pacman.AteItem(m_BonusItem.score);
+	}
+}
+}
+
 void PacmanLevel::Draw(Screen& screen)
 {
-	 //Debug code for wall check
+	//Debug code for wall check
 	for (const auto& wall : m_Walls)
 	{
 		screen.Draw(wall.GetAARectangle(), Colour::Blue());
@@ -160,14 +187,51 @@ bool PacmanLevel::WillCollide(const AARectangle& aBBox, PacmanMovement direction
 
 	bbox.MoveBy(GetMovementVector(direction));
 
+	BoundaryEdge edge;
+
 	for (const auto& wall : m_Walls)
 	{
-		BoundaryEdge edge;
 		if (wall.HasCollided(bbox, edge))
 		{
 			return true;
 		}
 	}
+
+	for (const auto& gate : m_Gate)
+	{
+		if (gate.HasCollided(bbox, edge))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool PacmanLevel::WillCollide(const Ghost& ghost, const GhostAI& ghostAI, PacmanMovement direction) const
+{
+	AARectangle bbox = ghost.GetBoundingBox();
+
+	bbox.MoveBy(GetMovementVector(direction));
+
+	BoundaryEdge edge;
+	for (const auto& wall : m_Walls)
+	{
+		if (wall.HasCollided(bbox, edge))
+		{
+			return true;
+		}
+	}
+
+	// Handle collisions with the gate - if the ghost is hitting the gate and is not in entering or leving the pen states then a collision happens
+	for (const auto& gate : m_Gate)
+	{
+		if (!(ghostAI.IsEnteringPen() || ghostAI.WantsToLeavePen()) && gate.HasCollided(bbox, edge))
+		{
+			return true;
+		}
+	}
+
 	return false;
 }
 
@@ -484,6 +548,15 @@ bool PacmanLevel::LoadLevel(const std::string& levelPath)
 
 	fileLoader.AddCommand(tileClydeSpawnPointCommand);
 
+	Command tileGateCommand;
+	tileGateCommand.command = "tile_is_gate";
+	tileGateCommand.parseFunc = [this](ParseFunctionParams params)
+	{
+		m_Tiles.back().isGate = FileCommandLoader::ReadInt(params);
+	};
+
+	fileLoader.AddCommand(tileGateCommand);
+
 	// entire layout
 	Command layoutCommand;
 	layoutCommand.command = "layout";
@@ -501,7 +574,13 @@ bool PacmanLevel::LoadLevel(const std::string& levelPath)
 			{
 				tile->position = Vec2D(startingX, layoutOffset.GetY());
 
-				if (tile->collidable > 0)
+				if (tile->isGate > 0)
+				{
+					Excluder gate;
+					gate.Init(AARectangle(Vec2D(startingX, layoutOffset.GetY()), tile->width, static_cast<unsigned int>(m_TileHeight)));
+					m_Gate.push_back(gate);
+				}
+				else if (tile->collidable > 0)
 				{
 					Excluder wall;
 					wall.Init(AARectangle(Vec2D(startingX, layoutOffset.GetY()), tile->width, static_cast<unsigned int>(m_TileHeight)));

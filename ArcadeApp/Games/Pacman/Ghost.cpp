@@ -1,6 +1,6 @@
 #include "Ghost.h"
 
-Ghost::Ghost():m_Points(0), m_InitialPos(Vec2D::Zero)
+Ghost::Ghost():m_Points(0), m_InitialPos(Vec2D::Zero), m_IsReleased(false), m_Delegate(nullptr)
 {
 }
 
@@ -106,10 +106,30 @@ void Ghost::ResetToFirstPosition()
 	m_VulnerabilityTimer = 0;
 	SetGhostState(GhostState::GHOST_STATE_ALIVE);
 	m_CanChangeDirection = true;
+
+	m_IsReleased = false;
+	if (m_Delegate)
+	{
+		m_Delegate->GhostWasResetToFirstposition();
+	}
+}
+
+void Ghost::ReleasedFromPen()
+{
+	m_IsReleased = true;
+	if (m_Delegate)
+	{
+		m_Delegate->GhostWasReleasedFromPen();
+	}
 }
 
 void Ghost::SetGhostState(GhostState state)
 {
+	if (m_Delegate)
+	{
+		m_Delegate->GhostDelegateGhostStateChangedTo(m_State, state);
+	}
+
 	m_State = state;
 
 	switch (m_State)
