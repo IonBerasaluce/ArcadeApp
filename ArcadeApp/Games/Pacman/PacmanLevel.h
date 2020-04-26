@@ -79,7 +79,7 @@ public:
 	void ResetToFirstLevel();
 
 	inline const std::vector<Vec2D>& GhostSpawnPoints() { return m_GhostSpawnPoints; }
-
+	inline uint32_t GetInGameTextYPos() const { return m_BonusItem.bbox.GetTopLeft().GetY(); }
 private:
 
 	bool LoadLevel(const std::string& levelPath);

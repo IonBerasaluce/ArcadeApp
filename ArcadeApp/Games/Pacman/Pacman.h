@@ -8,6 +8,15 @@
 #include "GhostAI.h"
 
 
+enum PacmanGameState
+{
+	LEVEL_STARTING = 0,
+	PLAY_GAME,
+	LOST_LIFE,
+	GAME_OVER
+};
+
+
 class Pacman: public Game
 {
 public:
@@ -36,4 +45,9 @@ private:
 
 	size_t m_NumLives;
 	uint32_t m_ReleaseGhostTimer;
+
+	PacmanGameState m_GameState;
+	uint32_t m_LevelStartingTimer;
+
+	AARectangle m_StringRect;
 };
