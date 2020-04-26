@@ -128,7 +128,10 @@ for (auto& pellet : m_Pellets)
 			if (pellet.powerPellet)
 			{
 				pacman.ResetGhostEatenMultiplier();
-				// TODO: Change the ghosts state to vulnerable
+				for (auto& ghost : ghosts)
+				{
+					ghost.SetStateToVulnerable();
+				}
 			}
 		}
 	}
@@ -151,11 +154,11 @@ if (m_BonusItem.spawned && !m_BonusItem.eaten)
 
 void PacmanLevel::Draw(Screen& screen)
 {
-	//Debug code for wall check
-	for (const auto& wall : m_Walls)
-	{
-		screen.Draw(wall.GetAARectangle(), Colour::Blue());
-	}
+	Sprite bgSprite;
+	bgSprite.width = m_BGImage.GetWidth();
+	bgSprite.height = m_BGImage.GetHeight();
+
+	screen.Draw(m_BGImage, bgSprite, Vec2D::Zero);
 
 	// Drawing the pellets
 	for (const auto& pellet : m_Pellets)
@@ -397,6 +400,20 @@ size_t PacmanLevel::NumPelletsEaten() const
 bool PacmanLevel::LoadLevel(const std::string& levelPath)
 {
 	FileCommandLoader fileLoader;
+
+	std::string bgImageName;
+
+	Command bgImageCommand;
+	bgImageCommand.command = "bg_image";
+	bgImageCommand.parseFunc = [this, &bgImageName](ParseFunctionParams params)
+	{
+		bgImageName = FileCommandLoader::ReadString(params);
+		bool loaded = m_BGImage.Load(App::Singleton().GetBasePath() + std::string("Assets\\") + bgImageName);
+
+		assert(loaded && "Didn't load the BG - Image");
+	};
+
+	fileLoader.AddCommand(bgImageCommand);
 
 	Command tileWidthCommand;
 	tileWidthCommand.command = "tile_width";

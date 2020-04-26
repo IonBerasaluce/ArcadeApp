@@ -43,7 +43,7 @@ private:
 	SpriteSheet m_PacmanSpriteSheet;
 	PacmanPlayer m_Pacman;
 
-	size_t m_NumLives;
+	int m_NumLives;
 	uint32_t m_ReleaseGhostTimer;
 
 	PacmanGameState m_GameState;

@@ -114,6 +114,19 @@ void Pacman::Init(GameController& controller)
 
 	controller.AddInputActionForKey(downAction);
 
+	ButtonAction backAction;
+	backAction.key = GameController::CancelKey();
+	backAction.action = [this](uint32_t dt, InputState state)
+	{
+		if (m_GameState == PacmanGameState::GAME_OVER && GameController::IsPressed(state))
+		{
+			// Go back to the previous scene
+			App::Singleton().PopScene();
+		}
+	};
+
+	controller.AddInputActionForKey(backAction);
+
 }
 
 void Pacman::Update(uint32_t dt)
@@ -160,6 +173,22 @@ void Pacman::Update(uint32_t dt)
 				}
 			}
  			ghost.Update(dt);
+
+			// Handle eating ghosts if they are vulnerable and pacman got close to them 
+			if (ghost.IsVulnerable() && m_Pacman.GetEatingBoundingBox().Intersects(ghost.GetBoundingBox()))
+			{
+				ghost.EatenByPacman();
+				m_Pacman.AteGhost(ghost.GetPoints());
+			}
+			else if (ghost.IsAlive() && ghost.GetEatingBoundingBox().Intersects(m_Pacman.GetBoundingBox()))
+			{
+				m_NumLives--;
+				m_GameState = PacmanGameState::LOST_LIFE;
+				m_Pacman.EatenByGhost();
+				m_PressedDirection = PacmanMovement::PACMAN_MOVE_NONE;
+				m_Pacman.SetMovementDirection(PacmanMovement::PACMAN_MOVE_NONE);
+				return;
+			}
 		}
 
 		m_Level.Update(dt, m_Pacman, m_Ghosts, m_GhostAI);
@@ -199,10 +228,10 @@ void Pacman::Draw(Screen& screen)
 		m_Ghosts[i].Draw(screen);
 	}
 
-	for (auto& ghostAI : m_GhostAI)
-	{
-		ghostAI.Draw(screen);
-	}
+	//for (auto& ghostAI : m_GhostAI)
+	//{
+	//	ghostAI.Draw(screen);
+	//}
 
 	const auto& font = App::Singleton().GetFont();
 	Vec2D textDrawPosition;
@@ -322,6 +351,7 @@ void Pacman::ResetGame()
 
 void Pacman::ResetPacman()
 {
+	m_ReleaseGhostTimer = 0;
 	m_GameState = LEVEL_STARTING;
 	m_Pacman.MoveTo(m_Level.GetPacmanSpawnLocation());
 	m_Pacman.ResetToFirstAnimation();

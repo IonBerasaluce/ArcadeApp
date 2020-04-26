@@ -171,6 +171,13 @@ void GhostAI::GhostDelegateGhostStateChangedTo(GhostState lastState, GhostState 
 	{
 		SetState(GhostAIState::GHOST_AI_STATE_GO_TO_PEN);
 	}
+	else if ((lastState == GhostState::GHOST_STATE_VULERABLE || lastState == GhostState::GHOST_STATE_VULNERABLE_ENDING) && state == GhostState::GHOST_STATE_ALIVE)
+	{
+		if (m_State == GhostAIState::GHOST_AI_STATE_CHASE || m_State == GhostAIState::GHOST_AI_STATE_SCATTER)
+		{
+			SetState(m_LastState);
+		}
+	}
 }
 
 void GhostAI::GhostWasReleasedFromPen()
@@ -201,13 +208,14 @@ void GhostAI::SetState(GhostAIState state)
 		m_Timer = 0;
 		break;
 	case GhostAIState::GHOST_AI_STATE_GO_TO_PEN:
-		break;
-	case GhostAIState::GHOST_AI_STATE_EXIT_PEN:
 	{
 		Vec2D target = { m_GhostPenTarget.GetX() + m_ptrGhost->GetBoundingBox().GetWidth() / 2, m_GhostPenTarget.GetY() - m_ptrGhost->GetBoundingBox().GetHeight() / 2 };
 		ChangeTarget(target);
 		break;
 	}
+	case GhostAIState::GHOST_AI_STATE_EXIT_PEN:
+		ChangeTarget(m_GhostExitPenPosition);
+		break;
 	case GhostAIState::GHOST_AI_STATE_SCATTER:
 		m_Timer = 0;
 		ChangeTarget(m_ScatterTarget);

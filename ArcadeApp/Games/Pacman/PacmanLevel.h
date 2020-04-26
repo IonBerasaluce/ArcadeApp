@@ -9,6 +9,7 @@
 #include "PacmanGameUtils.h"
 #include "Graphics/SpriteSheet.h"
 #include "GhostAI.h"
+#include "Graphics/BMPImage.h"
 
 class Screen;
 class PacmanPlayer;
@@ -86,6 +87,8 @@ private:
 	Tile* GetTileForSymbol(char symbol);
 	void ResetPellets();
 	bool HasEatenAllPellets() const;
+
+	BMPImage m_BGImage;
 
 	void GetBonusItemsSpriteName(std::string& spriteName, uint32_t& score) const;
 	void SpawnBonusItem();
