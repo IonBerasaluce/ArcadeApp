@@ -238,7 +238,7 @@ void BreakOut::ResetGame(size_t toLevel)
 		
 	m_Score.PlayerName = "ABC";
 	m_Score.score = 0;
-	m_HighScoreTable.Init();
+	m_HighScoreTable.Init("BreakOut");
 
 	m_Lives = NUM_LIVES;
 	m_YCutOff = App::Singleton().Height() - 2 * m_Paddle.PADDLE_HEIGHT;

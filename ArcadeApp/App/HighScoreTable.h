@@ -1,7 +1,7 @@
 #pragma once
-#include "App/App.h"
 #include <array>
 #include <string>
+#include <vector>
 
 class Screen;
 
@@ -18,7 +18,7 @@ class HighScoreTable
 {
 public:
 
-	void Init();
+	void Init(std::string name);
 	void UpdateTable(const ScoreInformation& scoreInfo);
 	void SaveToFile();
 	void PrintHighScoreTable();
@@ -32,9 +32,11 @@ public:
 
 private:
 	static const int MAX_HIGH_SCORES = 10;
-	const std::string m_ScoreFilePath = App::GetBasePath() + "Assets\\HighScores.txt";
+	std::string m_ScoreFilePath;
 	void CreateDefaultTable();
 	std::vector<ScoreInformation> m_Table;
+	std::string m_Name;
+	
 };
 
 /* 

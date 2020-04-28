@@ -6,6 +6,7 @@
 #include "Inputs/InputAction.h"
 #include "Ghost.h"
 #include "GhostAI.h"
+#include "App/HighScoreTable.h"
 
 
 enum PacmanGameState
@@ -50,4 +51,6 @@ private:
 	uint32_t m_LevelStartingTimer;
 
 	AARectangle m_StringRect;
+
+	HighScoreTable m_HighScoreTable;
 };

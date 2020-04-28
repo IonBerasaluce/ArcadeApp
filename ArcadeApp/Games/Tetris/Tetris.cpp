@@ -222,7 +222,7 @@ void Tetris::ResetGame()
 	m_Block.Init(static_cast<TetrominoType>(rand() % 7), m_LevelBoundary, m_PieceStartPosition);
 	m_NextBlock.Init(static_cast<TetrominoType>(rand() % 7), m_LevelBoundary, nextPiecePosition);
 
-	m_HighScoreTable.Init();
+	m_HighScoreTable.Init("Tetris");
 	m_Score.PlayerName = "ABC";
 	m_Score.score = 0;
 

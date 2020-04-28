@@ -1,6 +1,7 @@
 #include "HighScoreScene.h"
 #include "Graphics/BitmapFont.h"
 #include "Graphics/Colour.h"
+#include "App/App.h"
 
 HighScoreScene::HighScoreScene(HighScoreTable table): m_HighScoreTable(table)
 {

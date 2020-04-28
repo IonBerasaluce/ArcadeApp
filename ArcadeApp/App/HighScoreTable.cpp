@@ -4,10 +4,12 @@
 
 #include "HighScoreTable.h"
 #include "Graphics/Screen.h"
+#include "App.h"
 
-
-void HighScoreTable::Init()
+void HighScoreTable::Init(std::string name)
 {
+    m_Name = name;
+    m_ScoreFilePath = App::GetBasePath() + "Assets\\" + m_Name + "-HighScores.txt";
     // If there is a table that is already loaded delete it
     if (!m_Table.empty())
     {

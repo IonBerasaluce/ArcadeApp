@@ -3,6 +3,7 @@
 #include "PacmanGameUtils.h"
 #include "Inputs/GameController.h"
 #include "Graphics/BitMapFont.h"
+#include "App/HighScoreTable.h"
 
 /*
 - Pacman
@@ -211,6 +212,12 @@ void Pacman::Update(uint32_t dt)
 			}
 			else
 			{
+				//temporary code here
+				ScoreInformation score;
+				score.score = m_Pacman.Score();
+				score.PlayerName = "ABC";
+				m_HighScoreTable.UpdateTable(score);
+				m_HighScoreTable.SaveToFile();
 				m_GameState = PacmanGameState::GAME_OVER;
 			}
 		}
@@ -227,11 +234,6 @@ void Pacman::Draw(Screen& screen)
 	{
 		m_Ghosts[i].Draw(screen);
 	}
-
-	//for (auto& ghostAI : m_GhostAI)
-	//{
-	//	ghostAI.Draw(screen);
-	//}
 
 	const auto& font = App::Singleton().GetFont();
 	Vec2D textDrawPosition;
@@ -320,7 +322,7 @@ void Pacman::SetUpGhosts()
 	m_Ghosts[INKY] = inky;
 
 	auto inkyAI = GhostAI();
-	inkyAI.Init(m_Ghosts[INKY], inky.GetBoundingBox().GetWidth(), INKY_SCATTER_POS, m_Level.GhostSpawnPoints()[INKY], m_Level.GhostSpawnPoints()[BLINKY], INKY);
+	inkyAI.Init(m_Ghosts[INKY], inky.GetBoundingBox().GetWidth(), INKY_SCATTER_POS, m_Level.GhostSpawnPoints()[PINKY], m_Level.GhostSpawnPoints()[BLINKY], INKY);
 	m_GhostAI[INKY] = inkyAI;
 
 	Ghost clyde;
@@ -342,6 +344,9 @@ void Pacman::ResetGame()
 {
 	m_NumLives = MAX_NUM_LIVES;
 	m_PressedDirection = PACMAN_MOVE_NONE;
+
+	// Initialise the highscore table
+	m_HighScoreTable.Init("Pacman");
 
 	SetUpGhosts();
 	m_Pacman.ResetScore();
