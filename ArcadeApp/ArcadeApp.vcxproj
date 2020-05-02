@@ -137,6 +137,7 @@
     <ClCompile Include="App\App.cpp" />
     <ClCompile Include="App\Button.cpp" />
     <ClCompile Include="ArcadeApp.cpp" />
+    <ClCompile Include="Games\Asteroids\AsteroidsGame.cpp" />
     <ClCompile Include="Games\BreakOut\Ball.cpp" />
     <ClCompile Include="Games\BreakOut\Block.cpp" />
     <ClCompile Include="Games\BreakOut\BreakOut.cpp" />
@@ -168,6 +169,7 @@
     <ClCompile Include="Inputs\InputController.cpp" />
     <ClCompile Include="Math\Vec2D.cpp" />
     <ClCompile Include="Scenes\ArcadeScene.cpp" />
+    <ClCompile Include="Scenes\Asteroids\AsteroidsStartScene.cpp" />
     <ClCompile Include="Scenes\ButtonOptionsScene.cpp" />
     <ClCompile Include="Scenes\GameScene.cpp" />
     <ClCompile Include="Scenes\HighScoreScene.cpp" />
@@ -185,6 +187,7 @@
   <ItemGroup>
     <ClInclude Include="App\App.h" />
     <ClInclude Include="App\Button.h" />
+    <ClInclude Include="Games\Asteroids\AsteroidsGame.h" />
     <ClInclude Include="Games\BreakOut\Ball.h" />
     <ClInclude Include="Games\BreakOut\Block.h" />
     <ClInclude Include="Games\BoundaryEdge.h" />
@@ -219,6 +222,7 @@
     <ClInclude Include="Inputs\InputController.h" />
     <ClInclude Include="Math\Vec2D.h" />
     <ClInclude Include="Scenes\ArcadeScene.h" />
+    <ClInclude Include="Scenes\Asteroids\AsteroidsStartScene.h" />
     <ClInclude Include="Scenes\ButtonOptionsScene.h" />
     <ClInclude Include="Scenes\GameScene.h" />
     <ClInclude Include="Scenes\HighScoreScene.h" />

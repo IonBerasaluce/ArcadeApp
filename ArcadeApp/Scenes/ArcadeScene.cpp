@@ -16,6 +16,7 @@
 #include "Games/BreakOut/BreakOut.h"
 #include "Games/Tetris/Tetris.h"
 #include "NotImplementedScene.h"
+#include "Asteroids/AsteroidsStartScene.h"
 
 
 ArcadeScene::ArcadeScene(): ButtonOptionsScene({"Tetris", "Break Out!", "Asteroids", "Pac-man"}, Colour::Cyan())
@@ -89,7 +90,7 @@ std::unique_ptr<Scene> ArcadeScene::GetScene(eGame game)
 		break;
 		case ASTEROIDS:
 		{
-
+			return std::make_unique<AsteroidsStartScene>();
 		}
 		break;
 		case PACMAN:
