@@ -7,6 +7,7 @@ class Triangle : public Shape
 public:
 	Triangle();
 	Triangle(const Vec2D& p0, const Vec2D& p1, const Vec2D& p2);
+	Triangle(const Vec2D& centerPoint, unsigned int width, unsigned int height);
 
 	inline void SetP0(const Vec2D& p0) { mPoints[0] = p0; }
 	inline void SetP1(const Vec2D& p1) { mPoints[1] = p1; }
@@ -21,6 +22,7 @@ public:
 	virtual void MoveTo(const Vec2D& position) override;
 
 	float Area() const;
+	void Rotate(float angle);
 
 	bool ContainsPoint(const Vec2D& p) const;
 

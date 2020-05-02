@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Games/Game.h"
+#include "Player.h"
 
 /*
 Level
@@ -42,4 +43,5 @@ public:
 
 private:
 
+	Player m_Player;
 };

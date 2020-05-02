@@ -10,6 +10,18 @@ Triangle::Triangle(const Vec2D& p0, const Vec2D& p1, const Vec2D& p2)
 	mPoints.push_back(p2);
 }
 
+Triangle::Triangle(const Vec2D& centerPoint, unsigned int width, unsigned int height)
+{
+	
+	Vec2D p0 = Vec2D(centerPoint.GetX(), centerPoint.GetY() - ((float)height * 2 / 3));
+	Vec2D p1 = Vec2D(centerPoint.GetX() - (float)width / 3, centerPoint.GetY() + (float)height / 3);
+	Vec2D p2 = Vec2D(centerPoint.GetX() + (float)width / 3, centerPoint.GetY() + (float)height / 3);
+
+	mPoints.push_back(p0);
+	mPoints.push_back(p1);
+	mPoints.push_back(p2);
+}
+
 Triangle::Triangle():Triangle(Vec2D::Zero, Vec2D::Zero, Vec2D::Zero)
 {}
 
@@ -28,6 +40,16 @@ void Triangle::MoveTo(const Vec2D& position)
 float Triangle::Area() const
 {
 	return Area(GetP0(), GetP1(), GetP2());
+}
+
+void Triangle::Rotate(float angle)
+{
+	Vec2D center = GetCenterPoint();
+
+	for (auto& point : mPoints)
+	{
+		point.Rotate(angle, center);
+	}
 }
 
 bool Triangle::ContainsPoint(const Vec2D& p) const
