@@ -103,6 +103,11 @@ float Vec2D::Dot(const Vec2D& vec) const
 	return (mX * vec.mX + mY * vec.mY);
 }
 
+float Vec2D::Det(const Vec2D& vec) const
+{
+	return (mX * vec.mY - mY * vec.mX);
+}
+
 Vec2D Vec2D::ProjectOnto(const Vec2D& vec) const
 {
 	Vec2D unitVec = vec.GetUnitVec();
@@ -113,6 +118,14 @@ Vec2D Vec2D::ProjectOnto(const Vec2D& vec) const
 float Vec2D::AngleBetween(const Vec2D& vec) const
 {
 	return acosf(GetUnitVec().Dot(vec.GetUnitVec()));
+}
+
+float Vec2D::AngleBetween360(const Vec2D& vec) const
+{
+	float dotProd = Dot(vec);
+	float det = Det(vec);
+
+	return atan2f(det, dotProd);
 }
 
 Vec2D Vec2D::Reflect(const Vec2D& normal) const

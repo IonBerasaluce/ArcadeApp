@@ -38,8 +38,10 @@ public:
 	Vec2D& Normalize();
 	float Distance(const Vec2D& vec) const;
 	float Dot(const Vec2D& vec) const;
+	float Det(const Vec2D& vec) const;
 	Vec2D ProjectOnto(const Vec2D& vec) const;
 	float AngleBetween(const Vec2D& vec) const;
+	float AngleBetween360(const Vec2D& vec) const;
 	Vec2D Reflect(const Vec2D& normal) const;
 	void Rotate(float angle, const Vec2D& aroundPoint);
 	Vec2D RotationResults(float angle, const Vec2D& aroundPoint) const;
