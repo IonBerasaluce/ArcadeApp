@@ -2,6 +2,7 @@
 
 #include "Games/Game.h"
 #include "Player.h"
+#include "Shapes/AARectangle.h"
 
 /*
 Level
@@ -43,5 +44,8 @@ public:
 
 private:
 
+	void ResetGame();
+
 	Player m_Player;
+	AARectangle m_MapBoundary;
 };

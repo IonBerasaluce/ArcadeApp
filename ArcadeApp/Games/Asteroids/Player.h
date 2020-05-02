@@ -2,6 +2,7 @@
 #include "Shapes/Triangle.h"
 
 class Screen;
+class AARectangle;
 
 enum class RotationDirection
 {
@@ -25,6 +26,8 @@ public:
 	inline Vec2D GetPosition() const { return m_bTriangle.GetCenterPoint(); }
 	void ShootMissile();
 
+	void WrapAroundBoundary(const AARectangle& boundary);
+
 
 private:
 	Triangle m_bTriangle;
@@ -39,6 +42,5 @@ private:
 	static const unsigned int PLAYER_HEIGHT = 20;
 	
 	static const float PLAYER_ACCELERATION;
-	static const float PLAYER_ROTATIONAL_ACCELERATION;
 	static const float MAX_SPEED;
 };

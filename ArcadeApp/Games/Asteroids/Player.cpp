@@ -1,10 +1,8 @@
 #include "Player.h"
 #include "Graphics/Screen.h"
-
-#include <iostream>
+#include "Shapes/AARectangle.h"
 
 const float Player::PLAYER_ACCELERATION = 0.005f;
-const float Player::PLAYER_ROTATIONAL_ACCELERATION = 0.005f;
 const float Player::MAX_SPEED = 0.1;
 
 Player::Player(): m_CurrentSpeed(0.0f), m_CurrentVelocity(Vec2D::Zero)
@@ -52,12 +50,37 @@ void Player::Rotate(RotationDirection rotationDirection)
 {
 	Vec2D direction = GetCurrentDirection();
 	
-	float rotationAngle = static_cast<float>(rotationDirection) * 0.2f;
+	float rotationAngle = static_cast<float>(rotationDirection) * 0.3f;
 	m_bTriangle.Rotate(rotationAngle);
 }
 
 void Player::ShootMissile()
 {
+}
+
+void Player::WrapAroundBoundary(const AARectangle& boundary)
+{
+	Vec2D centrePoint = m_bTriangle.GetCenterPoint();
+	Vec2D position = centrePoint;
+	
+	if (centrePoint.GetX() < boundary.GetTopLeft().GetX())
+	{
+		position += Vec2D(boundary.GetWidth(), 0);
+	}
+	if (centrePoint.GetX() >= boundary.GetBottomRight().GetX())
+	{
+		position -= Vec2D(boundary.GetWidth(), 0);
+	}
+	if (centrePoint.GetY() < boundary.GetTopLeft().GetY())
+	{
+		position += Vec2D(0, boundary.GetHeight());
+	}
+	if (centrePoint.GetY() >= boundary.GetBottomRight().GetY())
+	{
+		position -= Vec2D(0, boundary.GetHeight());
+	}
+
+	m_bTriangle.MoveTo(position);
 }
 
 Vec2D Player::GetCurrentDirection() const
