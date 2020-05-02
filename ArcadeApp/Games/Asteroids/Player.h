@@ -1,5 +1,8 @@
 #pragma once
+#include <vector>
+
 #include "Shapes/Triangle.h"
+#include "Misile.h"
 
 class Screen;
 class AARectangle;
@@ -18,7 +21,7 @@ public:
 	Player();
 	void Init(Vec2D playerPos);
 	void Draw(Screen& screen);
-	void Update(uint32_t dt);
+	void Update(uint32_t dt, const AARectangle& boundary);
 	
 	void Accelerate(uint32_t dt);
 	void Rotate(RotationDirection rotationDirection);
@@ -31,13 +34,15 @@ public:
 
 private:
 	Triangle m_bTriangle;
-	
-	// Direction 
 	float m_CurrentSpeed;
 	Vec2D m_CurrentVelocity;
+	std::vector<Misile> m_Misiles;
 
+private:
 	Vec2D GetCurrentDirection() const;
-	
+
+
+private:
 	static const unsigned int PLAYER_WIDTH = 12;
 	static const unsigned int PLAYER_HEIGHT = 20;
 	

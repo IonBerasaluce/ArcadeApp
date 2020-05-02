@@ -23,6 +23,7 @@ public:
 
 	static InputKey ZKey();
 	static InputKey XKey();
+	static InputKey SpaceKey();
 
 	inline const MouseMovedAction& GetMouseMovedAction() { return m_MouseMovedAction; }
 	inline void SetMouseMovedAction(const MouseMovedAction& mouseMovedAction) { m_MouseMovedAction = mouseMovedAction; }

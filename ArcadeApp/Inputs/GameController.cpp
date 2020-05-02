@@ -78,6 +78,11 @@ InputKey GameController::XKey()
 	return static_cast<InputKey>(SDLK_x);
 }
 
+InputKey GameController::SpaceKey()
+{
+	return static_cast<InputKey>(SDLK_SPACE);
+}
+
 MouseInputAction GameController::GetMouseButtonActionForMouseButton(MouseButton button)
 {
 	for (const auto& buttonAction: m_MouseButtonActions)

@@ -165,6 +165,9 @@
     <ClCompile Include="Games\Asteroids\Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Games\Asteroids\Misile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\Colour.h">
@@ -324,6 +327,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Games\Asteroids\Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Games\Asteroids\Misile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

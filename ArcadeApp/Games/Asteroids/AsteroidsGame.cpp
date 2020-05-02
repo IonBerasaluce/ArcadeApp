@@ -47,15 +47,25 @@ void AsteroidsGame::Init(GameController& controller)
 
 	controller.AddInputActionForKey(rotateRightAction);
 
+	ButtonAction fireAction;
+	fireAction.key = GameController::SpaceKey();
+	fireAction.action = [this](uint32_t dt, InputState state)
+	{
+		if (GameController::IsPressed(state))
+		{
+			m_Player.ShootMissile();
+		}
+	};
+
+	controller.AddInputActionForKey(fireAction);
+
 	m_Player.Init(Vec2D(App::Singleton().Width() / 2, App::Singleton().Height() / 2));
 }
 
 void AsteroidsGame::Update(uint32_t dt)
 {
-	// Check if the player needs to be wrapped around the map
-	m_Player.WrapAroundBoundary(m_MapBoundary);
-	
-	m_Player.Update(dt);
+
+	m_Player.Update(dt, m_MapBoundary);
 
 }
 
