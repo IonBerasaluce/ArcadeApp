@@ -8,10 +8,15 @@ namespace
 	uint32_t MISILE_SPEED = 2;
 }
 
+Misile::Misile() :m_Hit(false)
+{
+}
+
 void Misile::Init(const Vec2D& direction, const Vec2D& position)
 {
 	m_Direction = direction;
 	m_Boundary = Triangle(position, MISILE_WIDTH, MISILE_HEIGHT);
+	m_Hit = false;
 
 	// Update the direction of the boundary box
 	Vec2D currentDirection = m_Boundary.GetP0() - m_Boundary.GetCenterPoint();
@@ -28,4 +33,15 @@ void Misile::Update(uint32_t dt, const AARectangle& mapBoundary)
 void Misile::Draw(Screen& screen)
 {
 	screen.Draw(m_Boundary, Colour::Red(), false);
+}
+
+void Misile::MoveTo(Vec2D position)
+{
+	m_Boundary.MoveTo(position);
+}
+
+void Misile::Hit()
+{
+	m_Hit = true;
+	MoveTo(Vec2D(-1000, 0));
 }

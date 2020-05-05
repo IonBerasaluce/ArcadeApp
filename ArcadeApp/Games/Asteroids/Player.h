@@ -2,7 +2,6 @@
 #include <vector>
 
 #include "Shapes/Triangle.h"
-#include "Misile.h"
 
 class Screen;
 class AARectangle;
@@ -27,20 +26,18 @@ public:
 	void Rotate(RotationDirection rotationDirection);
 
 	inline Vec2D GetPosition() const { return m_bTriangle.GetCenterPoint(); }
-	void ShootMissile();
+	inline void LossLife() { --m_Lives; }
 
 	void WrapAroundBoundary(const AARectangle& boundary);
+	void Reset(const Vec2D& playerPos);
 
+	Vec2D GetCurrentDirection() const;
 
 private:
 	Triangle m_bTriangle;
 	float m_CurrentSpeed;
 	Vec2D m_CurrentVelocity;
-	std::vector<Misile> m_Misiles;
-
-private:
-	Vec2D GetCurrentDirection() const;
-
+	int m_Lives;
 
 private:
 	static const unsigned int PLAYER_WIDTH = 12;

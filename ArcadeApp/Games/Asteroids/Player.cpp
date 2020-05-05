@@ -5,7 +5,7 @@
 const float Player::PLAYER_ACCELERATION = 0.005f;
 const float Player::MAX_SPEED = 0.1;
 
-Player::Player(): m_CurrentSpeed(0.0f), m_CurrentVelocity(Vec2D::Zero)
+Player::Player(): m_CurrentSpeed(0.0f), m_CurrentVelocity(Vec2D::Zero), m_Lives(3)
 {
 }
 
@@ -17,38 +17,12 @@ void Player::Init(Vec2D playerPos)
 void Player::Draw(Screen& screen)
 {
 	screen.Draw(m_bTriangle, Colour::White());
-
-	if (m_Misiles.size() > 0)
-	{
-		for (auto& misile : m_Misiles)
-		{
-			misile.Draw(screen);
-		}
-	}
 }
 
 void Player::Update(uint32_t dt, const AARectangle& boundary)
 {
 	// Update the position according to the speed
 	m_bTriangle.MoveBy(m_CurrentVelocity * dt);
-
-	std::vector<int> misileToDelete;
-
-	if (m_Misiles.size() > 0) 
-	{
-		for (size_t i = 0; i < m_Misiles.size(); i++)
-		{
-			// Update the misile and check if it should exist
-			m_Misiles[i].Update(dt, boundary);
-		}
-
-	}
-
-	auto i = remove_if(m_Misiles.begin(), m_Misiles.end(), [&](Misile misile) { return !boundary.ContainsPoint(misile.GetMisileLocation()); });
-	if (i != m_Misiles.end())
-	{
-		m_Misiles.erase(i);
-	}
 
 	// Wrap the player around the screen
 	WrapAroundBoundary(boundary);
@@ -83,18 +57,6 @@ void Player::Rotate(RotationDirection rotationDirection)
 	m_bTriangle.Rotate(rotationAngle);
 }
 
-void Player::ShootMissile()
-{
- 	if (m_Misiles.size() < 3)
-	{
-		// When player presses the action button we fire a misile
-		Vec2D spawnLocation = m_bTriangle.GetCenterPoint() + GetCurrentDirection() * 2;
-		Misile misile; 
-		misile.Init(GetCurrentDirection(), spawnLocation);
-		m_Misiles.push_back(misile);
-	}
-}
-
 void Player::WrapAroundBoundary(const AARectangle& boundary)
 {
 	Vec2D centrePoint = m_bTriangle.GetCenterPoint();
@@ -118,6 +80,13 @@ void Player::WrapAroundBoundary(const AARectangle& boundary)
 	}
 
 	m_bTriangle.MoveTo(position);
+}
+
+void Player::Reset(const Vec2D& playerPos)
+{
+	Init(playerPos);
+	m_CurrentVelocity = Vec2D::Zero;
+	m_CurrentSpeed = 0;
 }
 
 Vec2D Player::GetCurrentDirection() const

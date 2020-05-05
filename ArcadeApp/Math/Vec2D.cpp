@@ -92,6 +92,12 @@ Vec2D& Vec2D::Normalize()
 	return *this;
 }
 
+Vec2D Vec2D::Normal() const
+{
+	Vec2D normal = Vec2D(-mY, mX);
+	return normal;
+}
+
 float Vec2D::Distance(const Vec2D& vec) const
 {
 	return (*this - vec).Mag();

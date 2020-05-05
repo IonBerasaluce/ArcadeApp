@@ -2,7 +2,10 @@
 
 #include "Games/Game.h"
 #include "Player.h"
+#include "Misile.h"
 #include "Shapes/AARectangle.h"
+#include "Asteroid.h"
+#include "App/App.h"
 
 /*
 Level
@@ -42,10 +45,18 @@ public:
 	virtual void Draw(Screen& screen);
 	virtual const std::string& GetName() const;
 
-private:
+	void CalculateCollisions(Player& player);
 
+	void GenerateAsteroids(const int n, const int size, const Vec2D& position = Vec2D::Zero);
+
+private:
+	void ShootMissile(const Vec2D& position, const Vec2D& direction);
 	void ResetGame();
 
+private:
 	Player m_Player;
 	AARectangle m_MapBoundary;
+	std::vector<Asteroid> m_Asteroids;
+	std::vector<Misile> m_Misiles;
+	int m_NumAsteroids;
 };

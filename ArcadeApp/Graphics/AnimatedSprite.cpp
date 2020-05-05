@@ -11,6 +11,7 @@ void AnimatedSprite::Init(const std::string& animationsPath, const SpriteSheet& 
 	m_AnimationPlayer.Init(animationsPath);
 	m_ptrSpriteSheet = &spriteSheet;
 	m_Colour = colour;
+
 }
 
 void AnimatedSprite::Update(uint32_t dt)
