@@ -1,22 +1,32 @@
 #include "AsteroidsActor.h"
+#include "Graphics/Screen.h"
+#include "Shapes/Line2D.h"
 
 void AsteroidsActor::Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Vec2D& initialPos, float movementSpeed, const Colour& spriteColour)
 {
 	Actor::Init(spriteSheet, animationsPath, initialPos, spriteColour);
-	m_BoundingBox = Circle(initialPos, m_Sprite.GetBoundingBox().GetWidth() / 2);
 	m_MovementDirection = Vec2D(0, -1);
+	m_LookingDirection = Vec2D(0, -1);
 	m_Speed = movementSpeed;
 	m_RotationAngle = 0;	
+
+	m_Offset = Vec2D(m_Sprite.Size().GetX() / 2, m_Sprite.Size().GetY() / 2);
+	m_BoundingBox = Circle(initialPos + m_Offset, m_Sprite.GetBoundingBox().GetWidth() / 2);
 }
 
 void AsteroidsActor::Update(uint32_t dt)
 {
-	m_BoundingBox.MoveBy(m_MovementDirection * (float)dt * m_Speed);
+	Vec2D velocity = m_MovementDirection * (float)dt * m_Speed;
+	m_BoundingBox.MoveBy(velocity);
+	m_Sprite.MoveBy(velocity);
 }
 
 void AsteroidsActor::Draw(Screen& screen)
 {
 	m_Sprite.Draw(screen, m_RotationAngle);
+	screen.Draw(m_BoundingBox, Colour::Red());
+	Line2D line = {m_BoundingBox.GetCenterPoint(),(m_LookingDirection * 10) + m_BoundingBox.GetCenterPoint()};
+	screen.Draw(line, Colour::Green());
 }
 
 void AsteroidsActor::WrapAroundBoundary(const AARectangle& boundary)
@@ -43,10 +53,15 @@ void AsteroidsActor::WrapAroundBoundary(const AARectangle& boundary)
 	}
 
 	m_BoundingBox.MoveTo(position);
+	m_Sprite.MoveTo(position - m_Offset);
 }
 
 void AsteroidsActor::Rotate(const float angle)
 {
-	m_MovementDirection.Rotate(angle, m_BoundingBox.GetCenterPoint());
-	m_RotationAngle += angle;
+	// This is how the sprite should rotate
+	Vec2D pointInBoundary = m_BoundingBox.GetCenterPoint() + m_LookingDirection * m_BoundingBox.GetRadius();
+	pointInBoundary.Rotate(angle, m_BoundingBox.GetCenterPoint());
+	Vec2D direction = pointInBoundary - m_BoundingBox.GetCenterPoint();
+
+	m_LookingDirection = direction.GetUnitVec();
 }

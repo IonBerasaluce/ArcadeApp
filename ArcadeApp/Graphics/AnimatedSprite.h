@@ -25,6 +25,7 @@ public:
 	inline Vec2D Position() const { return m_Position; }
 	inline void SetPosition(const Vec2D position) { m_Position = position; }
 	inline void MoveBy(const Vec2D& delta) { m_Position += delta; }
+	inline void MoveTo(const Vec2D& position) { m_Position = position; }
 	inline bool IsFinishedPlayingAnimation() const { return m_AnimationPlayer.IsFinishedPlaying(); }
 	inline const Colour& GetColour() const{ return m_Colour; }
 	const SpriteSheet* GetSpriteSheet() const { return m_ptrSpriteSheet; }

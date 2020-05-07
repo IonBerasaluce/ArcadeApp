@@ -58,7 +58,7 @@ void AsteroidsGame::Init(GameController& controller)
 	{
 		if (GameController::IsPressed(state))
 		{
-			ShootMissile(m_Player.Position(), m_Player.GetMovementDirection());
+			ShootMissile(m_Player.Position(), m_Player.GetLookingDirection());
 		}
 	};
 

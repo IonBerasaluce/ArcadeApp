@@ -5,7 +5,6 @@
 
 const float Player::PLAYER_ACCELERATION = 0.005f;
 const float Player::MAX_SPEED = 0.1;
-const Vec2D Player::STARTING_POSITION = Vec2D(App::Singleton().Width() / 2, App::Singleton().Height() / 2);
 
 Player::Player(): m_Lives(3), m_Score(0)
 {
@@ -13,8 +12,8 @@ Player::Player(): m_Lives(3), m_Score(0)
 
 void Player::Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Colour& spriteColour)
 {
-	Vec2D position = Vec2D(App::Singleton().Width() / 2, App::Singleton().Height() / 2);
-	AsteroidsActor::Init(spriteSheet, animationsPath, position, 0.0f, spriteColour);
+	Vec2D startPosition = Vec2D(App::Singleton().Width() / 2, App::Singleton().Height() / 2);;
+	AsteroidsActor::Init(spriteSheet, animationsPath, startPosition, 0.0f, spriteColour);
 	Reset();
 }
 
@@ -28,14 +27,13 @@ void Player::Accelerate(uint32_t dt)
 {
 	SetAnimation("thusters", false);
 
-	Vec2D direction = GetMovementDirection();
-	Vec2D currentVelocity = direction * m_Speed;
+	Vec2D currentVelocity = m_MovementDirection * m_Speed;
 
-	Vec2D acceleration = direction * PLAYER_ACCELERATION * dt;
+	Vec2D acceleration = m_LookingDirection * PLAYER_ACCELERATION * dt;
 	Vec2D finalVelocity = currentVelocity + acceleration;
 
 	m_Speed = finalVelocity.Mag();
-	m_MovementDirection = finalVelocity.GetUnitVec();
+	SetMovementDirection(finalVelocity.GetUnitVec());
 
 	if (m_Speed > MAX_SPEED)
 	{

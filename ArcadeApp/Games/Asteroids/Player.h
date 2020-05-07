@@ -39,6 +39,4 @@ private:
 private:
 	static const float PLAYER_ACCELERATION;
 	static const float MAX_SPEED;
-
-	static const Vec2D STARTING_POSITION;
 };

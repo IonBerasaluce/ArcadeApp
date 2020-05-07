@@ -27,15 +27,17 @@ public:
 
 	inline void SetMovementDirection(Vec2D direction) { m_MovementDirection = direction; }
 	inline void SetMovementSpeed(const float speed) { m_Speed = speed; }
-	inline Vec2D GetMovementDirection() const { return m_MovementDirection; }
+	inline Vec2D GetLookingDirection() const { return m_LookingDirection; }
 	inline void Stop() { m_Speed = 0.0f; }
 	inline Circle GetBoundingBox() { return m_BoundingBox; }
 
 protected:
 	float m_Speed;
 	Vec2D m_MovementDirection;
+	Vec2D m_LookingDirection;
 
 private:
 	Circle m_BoundingBox;
 	float m_RotationAngle;
+	Vec2D m_Offset;
 };

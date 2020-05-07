@@ -485,9 +485,10 @@ void Screen::FillPoly(const std::vector<Vec2D>& points, FillPolyFunc func, float
 						// Here the first 2 arguments have to be the rotated pixel locations and func(pixelX, pixelY) has to receive the non-rotated pixels
 						// Update the position of the pixelX and Pixel Y based on the rotated pixel
 
-						Vec2D rotatedPixel = Vec2D(pixelX, pixelY);
-						rotatedPixel.Rotate(angle, centerPoint);
-						Draw((int)rotatedPixel.GetX(), (int)rotatedPixel.GetY(), func(pixelX, pixelY));
+						//Vec2D rotatedPixel = Vec2D(pixelX, pixelY);
+						//rotatedPixel.Rotate(angle, centerPoint);
+						//Draw((int)rotatedPixel.GetX(), (int)rotatedPixel.GetY(), func(pixelX, pixelY));
+						Draw(pixelX, pixelY, func(pixelX, pixelY));
 					}
 				}
 			}
