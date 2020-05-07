@@ -356,7 +356,7 @@ void Screen::Draw(const BMPImage& image, const Sprite& sprite, const Vec2D& pos,
 	}, rotation);
 }
 
-void Screen::Draw(const SpriteSheet& ss, const std::string& spriteName, const Vec2D& position, const Colour& overlayColour)
+void Screen::Draw(const SpriteSheet& ss, const std::string& spriteName, const Vec2D& position, const Colour& overlayColour, const float rotation)
 {
 	Draw(ss.GetBMPImage(), ss.GetSprite(spriteName), position, overlayColour);
 }

@@ -59,4 +59,6 @@ private:
 	std::vector<Asteroid> m_Asteroids;
 	std::vector<Misile> m_Misiles;
 	int m_NumAsteroids;
+	
+	SpriteSheet m_AsteroidsSpriteSheet;
 };

@@ -139,6 +139,7 @@
     <ClCompile Include="App\Button.cpp" />
     <ClCompile Include="ArcadeApp.cpp" />
     <ClCompile Include="Games\Asteroids\Asteroid.cpp" />
+    <ClCompile Include="Games\Asteroids\AsteroidsActor.cpp" />
     <ClCompile Include="Games\Asteroids\AsteroidsGame.cpp" />
     <ClCompile Include="Games\Asteroids\Misile.cpp" />
     <ClCompile Include="Games\Asteroids\Player.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="App\App.h" />
     <ClInclude Include="App\Button.h" />
     <ClInclude Include="Games\Asteroids\Asteroid.h" />
+    <ClInclude Include="Games\Asteroids\AsteroidsActor.h" />
     <ClInclude Include="Games\Asteroids\AsteroidsGame.h" />
     <ClInclude Include="Games\Asteroids\Misile.h" />
     <ClInclude Include="Games\Asteroids\Player.h" />

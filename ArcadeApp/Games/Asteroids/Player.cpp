@@ -1,96 +1,69 @@
 #include "Player.h"
 #include "Graphics/Screen.h"
 #include "Shapes/AARectangle.h"
+#include "App/App.h"
 
 const float Player::PLAYER_ACCELERATION = 0.005f;
 const float Player::MAX_SPEED = 0.1;
+const Vec2D Player::STARTING_POSITION = Vec2D(App::Singleton().Width() / 2, App::Singleton().Height() / 2);
 
-Player::Player(): m_CurrentSpeed(0.0f), m_CurrentVelocity(Vec2D::Zero), m_Lives(3)
+Player::Player(): m_Lives(3), m_Score(0)
 {
 }
 
-void Player::Init(Vec2D playerPos)
+void Player::Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Colour& spriteColour)
 {
-	m_bTriangle = Triangle(playerPos, PLAYER_WIDTH, PLAYER_HEIGHT);
-}
-
-void Player::Draw(Screen& screen)
-{
-	screen.Draw(m_bTriangle, Colour::White());
+	Vec2D position = Vec2D(App::Singleton().Width() / 2, App::Singleton().Height() / 2);
+	AsteroidsActor::Init(spriteSheet, animationsPath, position, 0.0f, spriteColour);
+	Reset();
 }
 
 void Player::Update(uint32_t dt, const AARectangle& boundary)
 {
-	// Update the position according to the speed
-	m_bTriangle.MoveBy(m_CurrentVelocity * dt);
-
-	// Wrap the player around the screen
+	AsteroidsActor::Update(dt);
 	WrapAroundBoundary(boundary);
 }
 
 void Player::Accelerate(uint32_t dt)
 {
-	Vec2D direction = GetCurrentDirection();
+	SetAnimation("thusters", false);
+
+	Vec2D direction = GetMovementDirection();
+	Vec2D currentVelocity = direction * m_Speed;
 
 	Vec2D acceleration = direction * PLAYER_ACCELERATION * dt;
+	Vec2D finalVelocity = currentVelocity + acceleration;
 
-	Vec2D finalVelocity = m_CurrentVelocity + acceleration;
+	m_Speed = finalVelocity.Mag();
+	m_MovementDirection = finalVelocity.GetUnitVec();
 
-	float finalSpeed = finalVelocity.Mag();
-
-	if (finalSpeed > MAX_SPEED)
+	if (m_Speed > MAX_SPEED)
 	{
-		finalSpeed = MAX_SPEED;
-		finalVelocity = finalSpeed * direction;
+		m_Speed = MAX_SPEED;
 	}
-
-	m_bTriangle.MoveBy((m_CurrentVelocity + finalVelocity) / 2 * dt);
-
-	m_CurrentVelocity = finalVelocity;
 }
 
 void Player::Rotate(RotationDirection rotationDirection)
 {
-	Vec2D direction = GetCurrentDirection();
-	
 	float rotationAngle = static_cast<float>(rotationDirection) * 0.3f;
-	m_bTriangle.Rotate(rotationAngle);
+	AsteroidsActor::Rotate(rotationAngle);
 }
 
-void Player::WrapAroundBoundary(const AARectangle& boundary)
+void Player::Reset()
 {
-	Vec2D centrePoint = m_bTriangle.GetCenterPoint();
-	Vec2D position = centrePoint; 
-	
-	if (centrePoint.GetX() < boundary.GetTopLeft().GetX())
-	{
-		position += Vec2D(boundary.GetWidth(), 0);
-	}
-	if (centrePoint.GetX() >= boundary.GetBottomRight().GetX())
-	{
-		position -= Vec2D(boundary.GetWidth(), 0);
-	}
-	if (centrePoint.GetY() < boundary.GetTopLeft().GetY())
-	{
-		position += Vec2D(0, boundary.GetHeight());
-	}
-	if (centrePoint.GetY() >= boundary.GetBottomRight().GetY())
-	{
-		position -= Vec2D(0, boundary.GetHeight());
-	}
-
-	m_bTriangle.MoveTo(position);
+	//MoveTo(STARTING_POSITION);
+	ResetScore();
+	m_MovementDirection = Vec2D(0, -1);
+	m_Speed = 0;
+	ResetToFirstAnimation();
 }
 
-void Player::Reset(const Vec2D& playerPos)
+void Player::ResetScore()
 {
-	Init(playerPos);
-	m_CurrentVelocity = Vec2D::Zero;
-	m_CurrentSpeed = 0;
+	m_Score = 0;
 }
 
-Vec2D Player::GetCurrentDirection() const
+void Player::ResetToFirstAnimation()
 {
-	Vec2D direction = m_bTriangle.GetP0() - m_bTriangle.GetCenterPoint();
-	return direction.GetUnitVec();
+	SetAnimation("ship", true);
 }

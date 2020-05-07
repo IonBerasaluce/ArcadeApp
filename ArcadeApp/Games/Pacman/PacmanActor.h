@@ -26,10 +26,6 @@ public:
 
 	AARectangle GetEatingBoundingBox() const;
 
-	inline bool IsFinishedAnimation() const { return m_Sprite.IsFinishedPlayingAnimation(); }
-	inline const AARectangle GetBoundingBox() const { return m_Sprite.GetBoundingBox(); }
-	inline void MoveBy(const Vec2D& delta) { m_Sprite.MoveBy(delta); }
-	inline void MoveTo(const Vec2D& position) { m_Sprite.SetPosition(position); }
 	inline PacmanMovement GetMovementDirection() const { return m_MovementDirection; }
 
 protected:	

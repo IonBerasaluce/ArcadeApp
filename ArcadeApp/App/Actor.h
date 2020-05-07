@@ -25,6 +25,10 @@ public:
 	inline Vec2D Position() const { return m_Sprite.Position(); }
 	inline const Colour& GetSpriteColour() const { return m_Sprite.GetColour(); }
 
+	inline void MoveBy(const Vec2D& delta) { m_Sprite.MoveBy(delta); }
+	inline void MoveTo(const Vec2D& position) { m_Sprite.SetPosition(position); }
+
+	inline const AARectangle GetBoundingBox() const { return m_Sprite.GetBoundingBox(); }
 
 protected:
 	void SetAnimation(const std::string& animationName, bool looped);

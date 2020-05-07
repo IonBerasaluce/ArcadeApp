@@ -10,6 +10,11 @@
 
 void AsteroidsGame::Init(GameController& controller)
 {
+	// Init the player
+	m_AsteroidsSpriteSheet.Load("AsteroidsSprites");
+	std::string animationsPath = App::Singleton().GetBasePath() + "Assets\\AsteroidsAnimations.txt";
+	m_Player.Init(m_AsteroidsSpriteSheet, animationsPath);
+
 	// Set up the game controller
 	ButtonAction accelerateAction;
 	accelerateAction.key = GameController::UpKey();
@@ -53,7 +58,7 @@ void AsteroidsGame::Init(GameController& controller)
 	{
 		if (GameController::IsPressed(state))
 		{
-			ShootMissile(m_Player.GetPosition(), m_Player.GetCurrentDirection());
+			ShootMissile(m_Player.Position(), m_Player.GetMovementDirection());
 		}
 	};
 
@@ -152,12 +157,12 @@ void AsteroidsGame::CalculateCollisions(Player& player)
 	for (size_t i = 0; i < m_Asteroids.size(); i++)
 	{
 		// Collision Asteroid to player
-		float distance = m_Asteroids[i].GetPosition().Distance(m_Player.GetPosition());
+		float distance = m_Asteroids[i].GetPosition().Distance(m_Player.Position());
 		if (distance < m_Asteroids[i].GetRadious())
 		{
 			m_Player.LossLife();
 			// TODO: Clean up here
-			m_Player.Reset(Vec2D(App::Singleton().Width() / 2, App::Singleton().Height() / 2));
+			m_Player.Reset();
 		}
 
 		// Collision Asteroid to missile
@@ -218,13 +223,13 @@ void AsteroidsGame::ResetGame()
 	// When creating the boundary we make it slightly bigger than the screen to improve the wrap effect
 	m_MapBoundary = { Vec2D(-10, -10), Vec2D(App::Singleton().Width() + 10, App::Singleton().Height() + 10) };
 
-	m_Player.Reset(Vec2D(App::Singleton().Width() / 2, App::Singleton().Height() / 2));
+	m_Player.Reset();
 	
 	m_Asteroids.clear();
 	m_Misiles.clear();
 
 	Asteroid asteroid;
-	asteroid.Init(m_Player.GetPosition() + Vec2D(40, 0), Vec2D(2,-4), 3);
+	asteroid.Init(m_Player.Position() + Vec2D(40, 0), Vec2D(2,-4), 3);
 	m_Asteroids.push_back(asteroid);
 
 	m_NumAsteroids = 2;

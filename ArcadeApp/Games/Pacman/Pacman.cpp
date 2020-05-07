@@ -127,7 +127,6 @@ void Pacman::Init(GameController& controller)
 	};
 
 	controller.AddInputActionForKey(backAction);
-
 }
 
 void Pacman::Update(uint32_t dt)

@@ -19,7 +19,7 @@ void AnimatedSprite::Update(uint32_t dt)
 	m_AnimationPlayer.Update(dt);
 }
 
-void AnimatedSprite::Draw(Screen& theScreen)
+void AnimatedSprite::Draw(Screen& theScreen, const float rotationAngle)
 {
 	AnimationFrame frame = m_AnimationPlayer.GetCurrentAnimationFrame();
 
@@ -34,7 +34,7 @@ void AnimatedSprite::Draw(Screen& theScreen)
 
 	if (frame.overlay.size() > 0)
 	{
-		theScreen.Draw(*m_ptrSpriteSheet, frame.overlay, m_Position, frame.overlayColour);
+		theScreen.Draw(*m_ptrSpriteSheet, frame.overlay, m_Position, frame.overlayColour, rotationAngle);
 	}
 }
 
