@@ -22,9 +22,6 @@ void AsteroidsActor::Draw(Screen& screen)
 	float rotationAngle = m_LookingDirection.AngleBetween360(Vec2D(0, -1));
 
 	m_Sprite.Draw(screen, -1 * rotationAngle);
-	screen.Draw(m_Sprite.GetBoundingBox(), Colour::Red());
-	Line2D line = { m_Sprite.GetBoundingBox().GetCenterPoint(),(m_LookingDirection * 10) + m_Sprite.GetBoundingBox().GetCenterPoint()};
-	screen.Draw(line, Colour::Green());
 }
 
 void AsteroidsActor::WrapAroundBoundary(const AARectangle& boundary)

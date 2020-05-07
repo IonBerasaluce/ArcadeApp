@@ -3,33 +3,31 @@
 #include "Shapes/AARectangle.h"
 
 const float Asteroid::m_RotatingSpeed = 0.001f;
+const float Asteroid::m_Speed = 0.005f;
 
 Asteroid::Asteroid():m_Size(AsteroidSize::SMALL), m_Destroyed(false), m_Rotation(0)
 {
 }
 
-void Asteroid::Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Vec2D& direction, const Vec2D& position, AsteroidSize size, const Colour& spriteColour)
+void Asteroid::Init(const SpriteSheet& spriteSheet, const Vec2D& direction, const Vec2D& position, AsteroidSize size, const Colour& spriteColour)
 {
-	AsteroidsActor::Init(spriteSheet, animationsPath, position, 0.0f, spriteColour);
 	m_Size = size;
+	m_SpriteSheet = spriteSheet;
 	m_MovementDirection = direction;
-	m_Speed = 0.005f;
-	m_CollisionBoundary = Circle(m_Sprite.GetBoundingBox().GetCenterPoint(), m_Sprite.GetBoundingBox().GetHeight() / 2);
+
+	m_Sprite = spriteSheet.GetSprite(GetSpriteName());
+	m_CollisionBoundary = Circle(position + m_Sprite.Offset(), m_Sprite.width / 2);
 }
 
 void Asteroid::Draw(Screen& screen)
 {
 	// We only rotate when we draw to the screen.
-	screen.Draw(*m_Sprite.GetSpriteSheet(), GetSprite(), m_Sprite.Position(), Colour::White(), m_Rotation);
+	screen.Draw(m_SpriteSheet, GetSpriteName(), m_CollisionBoundary.GetCenterPoint() + m_Sprite.Offset(), Colour::White(), m_Rotation);
 }
 
 void Asteroid::Update(uint32_t dt, const AARectangle& boundary)
 {
-	AsteroidsActor::Update(dt);
-	
-	WrapAroundBoundary(boundary);
-	m_CollisionBoundary.MoveTo(m_Sprite.GetBoundingBox().GetCenterPoint());
-
+	m_CollisionBoundary.MoveBy(m_MovementDirection * m_Speed * dt);
 	m_Rotation += m_RotatingSpeed * dt;
 }
 
@@ -39,23 +37,30 @@ void Asteroid::Hit()
 }
 
 
-std::string Asteroid::GetSprite()
+std::string Asteroid::GetSpriteName()
 {
+	std::string spriteName;
+
 	switch (m_Size)
 	{
 		case SMALL:
 		{
-			std::string spriteName = "small_rock";
+			spriteName = "small_rock";
 			return spriteName;
 		}
 		case MEDIUM:
 		{
-			std::string spriteName = "medium_rock";
+			spriteName = "medium_rock";
 			return spriteName;
 		}
 		case LARGE:
 		{
-			std::string spriteName = "medium_rock2";
+			spriteName = "medium_rock2";
+			return spriteName;
+		}
+		case EXTRALARGE:
+		{
+			spriteName = "big_rock";
 			return spriteName;
 		}
 	}

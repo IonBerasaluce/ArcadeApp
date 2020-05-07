@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BMPImage.h"
+#include "Shapes/AARectangle.h"
 #include <string>
 #include <vector>
 
@@ -11,6 +12,13 @@ struct Sprite
 	uint32_t yPos = 0;
 	uint32_t width = 0; 
 	uint32_t height = 0;
+
+	Vec2D Offset()
+	{
+		AARectangle rect = AARectangle(Vec2D(xPos, yPos), width, height);
+		Vec2D offset = rect.GetTopLeft() - rect.GetCenterPoint();
+		return offset;
+	}
 };
 
 class SpriteSheet

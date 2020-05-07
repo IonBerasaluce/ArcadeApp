@@ -121,7 +121,7 @@ void AsteroidsGame::Update(uint32_t dt)
 	}
 	else
 	{
-		GenerateAsteroids(m_NumAsteroids + 1, AsteroidSize::LARGE);
+		GenerateAsteroids(m_NumAsteroids + 1, AsteroidSize::EXTRALARGE);
 	}
 
 }
@@ -199,9 +199,9 @@ void AsteroidsGame::GenerateAsteroids(const int n, AsteroidSize size, const Vec2
 		randomDir = Vec2D(rand(), rand());
 
 		Asteroid asteroid;
-		asteroid.Init(m_AsteroidsSpriteSheet, m_AnimationsPath, randomDir.GetUnitVec(), newPosition, size);
+		asteroid.Init(m_AsteroidsSpriteSheet, randomDir.GetUnitVec(), newPosition, size);
 
-		if (size == AsteroidSize::LARGE)
+		if (size == AsteroidSize::EXTRALARGE)
 		{
 			++m_NumAsteroids;
 		}
@@ -231,7 +231,7 @@ void AsteroidsGame::ResetGame()
 	
 	m_Asteroids.clear();
 	m_Misiles.clear();
-	GenerateAsteroids(2, AsteroidSize::LARGE, Vec2D(2, -4));
+	GenerateAsteroids(2, AsteroidSize::EXTRALARGE);
 }
 
 const std::string& AsteroidsGame::GetName() const
