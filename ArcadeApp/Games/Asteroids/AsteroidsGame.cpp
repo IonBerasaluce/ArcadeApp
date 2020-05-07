@@ -12,8 +12,8 @@ void AsteroidsGame::Init(GameController& controller)
 {
 	// Init the player
 	m_AsteroidsSpriteSheet.Load("AsteroidsSprites");
-	std::string animationsPath = App::Singleton().GetBasePath() + "Assets\\AsteroidsAnimations.txt";
-	m_Player.Init(m_AsteroidsSpriteSheet, animationsPath);
+	m_AnimationsPath = App::Singleton().GetBasePath() + "Assets\\AsteroidsAnimations.txt";
+	m_Player.Init(m_AsteroidsSpriteSheet, m_AnimationsPath);
 
 	// Set up the game controller
 	ButtonAction accelerateAction;
@@ -84,7 +84,7 @@ void AsteroidsGame::Update(uint32_t dt)
 
 	}
 
-	auto i = remove_if(m_Misiles.begin(), m_Misiles.end(), [&](Misile misile) { return !m_MapBoundary.ContainsPoint(misile.GetPosition()); });
+	auto i = remove_if(m_Misiles.begin(), m_Misiles.end(), [&](Misile misile) { return !m_MapBoundary.ContainsPoint(misile.Position()); });
 	if (i != m_Misiles.end())
 	{
 		m_Misiles.erase(i);
@@ -99,7 +99,7 @@ void AsteroidsGame::Update(uint32_t dt)
 		if (m_Asteroids[i].IsDestroyed() && m_Asteroids[i].GetSize() > 1)
 		{
 			Asteroid currentAsteroid = m_Asteroids[i];
-			GenerateAsteroids(2, currentAsteroid.GetSize() - 1, currentAsteroid.GetPosition());
+			GenerateAsteroids(2, static_cast<AsteroidSize>(currentAsteroid.GetSize() - 1), currentAsteroid.Position());
 		}
 	}
 	
@@ -121,8 +121,7 @@ void AsteroidsGame::Update(uint32_t dt)
 	}
 	else
 	{
-		GenerateAsteroids(m_NumAsteroids + 1, 3);
-		m_NumAsteroids += 1;
+		GenerateAsteroids(m_NumAsteroids + 1, AsteroidSize::LARGE);
 	}
 
 }
@@ -157,7 +156,7 @@ void AsteroidsGame::CalculateCollisions(Player& player)
 	for (size_t i = 0; i < m_Asteroids.size(); i++)
 	{
 		// Collision Asteroid to player
-		float distance = m_Asteroids[i].GetPosition().Distance(m_Player.Position());
+		float distance = m_Asteroids[i].Position().Distance(m_Player.Position());
 		if (distance < m_Asteroids[i].GetRadious())
 		{
 			m_Player.LossLife();
@@ -170,7 +169,7 @@ void AsteroidsGame::CalculateCollisions(Player& player)
 		{
 			if (!m_Misiles[j].IsHit())
 			{
-				float distance = m_Asteroids[i].GetPosition().Distance(m_Misiles[j].GetPosition());
+				float distance = m_Asteroids[i].Position().Distance(m_Misiles[j].Position());
 				if (distance < m_Asteroids[i].GetRadious())
 				{
 					m_Misiles[j].Hit();
@@ -181,7 +180,7 @@ void AsteroidsGame::CalculateCollisions(Player& player)
 	}
 }
 
-void AsteroidsGame::GenerateAsteroids(const int n, const int size, const Vec2D& position)
+void AsteroidsGame::GenerateAsteroids(const int n, AsteroidSize size, const Vec2D& position)
 {
 	Vec2D newPosition;
 	Vec2D randomDir;
@@ -200,7 +199,13 @@ void AsteroidsGame::GenerateAsteroids(const int n, const int size, const Vec2D& 
 		randomDir = Vec2D(rand(), rand());
 
 		Asteroid asteroid;
-		asteroid.Init(newPosition, randomDir, size);
+		asteroid.Init(m_AsteroidsSpriteSheet, m_AnimationsPath, randomDir.GetUnitVec(), newPosition, size);
+
+		if (size == AsteroidSize::LARGE)
+		{
+			++m_NumAsteroids;
+		}
+
 		m_Asteroids.push_back(asteroid);
 	}
 }
@@ -210,9 +215,8 @@ void AsteroidsGame::ShootMissile(const Vec2D& position, const Vec2D& direction)
 	if (m_Misiles.size() < 3)
 	{
 		// When player presses the action button we fire a misile
-		Vec2D spawnLocation = position + direction * 2;
 		Misile misile;
-		misile.Init(direction, spawnLocation);
+		misile.Init(m_AsteroidsSpriteSheet, m_AnimationsPath, m_Player.GetLookingDirection(), m_Player.Position());
 		m_Misiles.push_back(misile);
 	}
 }
@@ -227,12 +231,7 @@ void AsteroidsGame::ResetGame()
 	
 	m_Asteroids.clear();
 	m_Misiles.clear();
-
-	Asteroid asteroid;
-	asteroid.Init(m_Player.Position() + Vec2D(40, 0), Vec2D(2,-4), 3);
-	m_Asteroids.push_back(asteroid);
-
-	m_NumAsteroids = 2;
+	GenerateAsteroids(2, AsteroidSize::LARGE, Vec2D(2, -4));
 }
 
 const std::string& AsteroidsGame::GetName() const

@@ -1,32 +1,41 @@
 #pragma once
 #include "Shapes/Circle.h"
+#include "Graphics/SpriteSheet.h"
+#include "AsteroidsActor.h"
 
 class Screen;
 class AARectangle;
 
-class Asteroid
+enum AsteroidSize
+{
+	SMALL = 0,
+	MEDIUM,
+	LARGE
+};
+
+class Asteroid : public AsteroidsActor
 {
 public:
 	Asteroid();
-	void Init(const Vec2D& position, const Vec2D& direction, unsigned int size);
+	void Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Vec2D& direction, const Vec2D& position, AsteroidSize size, const Colour& spriteColour = Colour::White());
 	void Draw(Screen& screen);
 	void Update(uint32_t dt, const AARectangle& boundary);
 
-	void WrapAroundBoundary(const AARectangle& boundary);
-
-	inline const Vec2D GetPosition() const { return m_Boundary.GetCenterPoint(); }
-	inline const Vec2D GetDirection() const { return m_Direction; }
-	inline const unsigned int GetSize() const { return m_Size; }
+	inline const unsigned int GetSize() const { return static_cast<int>(m_Size); }
 	inline bool IsDestroyed() const { return m_Destroyed; }
 
 	void Hit();
-	inline float const GetRadious() const { return m_Boundary.GetRadius(); }
+	inline float const GetRadious() const { return m_CollisionBoundary.GetRadius(); }
 
 private:
+	std::string GetSprite();
 
-	Circle m_Boundary;
-	Vec2D m_Direction;
-	unsigned int m_Size;
+private:
+	Circle m_CollisionBoundary;
+	Vec2D m_LookingDirection;
+	AsteroidSize m_Size;
 	bool m_Destroyed;
-	static const float m_MovementSpeed;
+	float m_Rotation;
+
+	static const float m_RotatingSpeed;
 };

@@ -2,58 +2,61 @@
 #include "Graphics/Screen.h"
 #include "Shapes/AARectangle.h"
 
-const float Asteroid::m_MovementSpeed = 0.05f;
+const float Asteroid::m_RotatingSpeed = 0.001f;
 
-Asteroid::Asteroid():m_Size(0), m_Destroyed(false)
+Asteroid::Asteroid():m_Size(AsteroidSize::SMALL), m_Destroyed(false), m_Rotation(0)
 {
 }
 
-void Asteroid::Init(const Vec2D& position, const Vec2D& direction, unsigned int size)
+void Asteroid::Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Vec2D& direction, const Vec2D& position, AsteroidSize size, const Colour& spriteColour)
 {
+	AsteroidsActor::Init(spriteSheet, animationsPath, position, 0.0f, spriteColour);
 	m_Size = size;
-	m_Direction = direction;
-
-	m_Boundary = Circle(position, m_Size * 8);
-	m_Destroyed = false;
+	m_MovementDirection = direction;
+	m_Speed = 0.005f;
+	m_CollisionBoundary = Circle(m_Sprite.GetBoundingBox().GetCenterPoint(), m_Sprite.GetBoundingBox().GetHeight() / 2);
 }
 
 void Asteroid::Draw(Screen& screen)
 {
-	screen.Draw(m_Boundary, Colour::White());
+	// We only rotate when we draw to the screen.
+	screen.Draw(*m_Sprite.GetSpriteSheet(), GetSprite(), m_Sprite.Position(), Colour::White(), m_Rotation);
 }
 
 void Asteroid::Update(uint32_t dt, const AARectangle& boundary)
 {
-	m_Boundary.MoveBy(m_Direction.GetUnitVec() * dt * m_MovementSpeed);
+	AsteroidsActor::Update(dt);
+	
 	WrapAroundBoundary(boundary);
-}
+	m_CollisionBoundary.MoveTo(m_Sprite.GetBoundingBox().GetCenterPoint());
 
-void Asteroid::WrapAroundBoundary(const AARectangle& boundary)
-{
-	Vec2D centrePoint = m_Boundary.GetCenterPoint();
-	Vec2D position = centrePoint;
-
-	if (centrePoint.GetX() < boundary.GetTopLeft().GetX())
-	{
-		position += Vec2D(boundary.GetWidth(), 0);
-	}
-	if (centrePoint.GetX() >= boundary.GetBottomRight().GetX())
-	{
-		position -= Vec2D(boundary.GetWidth(), 0);
-	}
-	if (centrePoint.GetY() < boundary.GetTopLeft().GetY())
-	{
-		position += Vec2D(0, boundary.GetHeight());
-	}
-	if (centrePoint.GetY() >= boundary.GetBottomRight().GetY())
-	{
-		position -= Vec2D(0, boundary.GetHeight());
-	}
-
-	m_Boundary.MoveTo(position);
+	m_Rotation += m_RotatingSpeed * dt;
 }
 
 void Asteroid::Hit()
 {
 	m_Destroyed = true;
+}
+
+
+std::string Asteroid::GetSprite()
+{
+	switch (m_Size)
+	{
+		case SMALL:
+		{
+			std::string spriteName = "small_rock";
+			return spriteName;
+		}
+		case MEDIUM:
+		{
+			std::string spriteName = "medium_rock";
+			return spriteName;
+		}
+		case LARGE:
+		{
+			std::string spriteName = "medium_rock2";
+			return spriteName;
+		}
+	}
 }

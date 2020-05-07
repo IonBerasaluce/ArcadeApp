@@ -24,19 +24,19 @@ public:
 	
 	void Accelerate(uint32_t dt);
 	void Rotate(RotationDirection rotationDirection);
+	void MoveTo(const Vec2D& position);
+	void Reset();
 
 	inline void LossLife() { --m_Lives; }
 
-	void Reset();
+private:
 	void ResetScore();
-
-	void ResetToFirstAnimation();
+	void ResetDirection();
 
 private:
 	int m_Lives;
 	int m_Score;
-
-private:
+	Circle m_CollisionBoundary;
 	static const float PLAYER_ACCELERATION;
 	static const float MAX_SPEED;
 };

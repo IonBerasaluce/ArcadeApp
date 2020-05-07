@@ -29,7 +29,6 @@ public:
 	inline void SetMovementSpeed(const float speed) { m_Speed = speed; }
 	inline Vec2D GetLookingDirection() const { return m_LookingDirection; }
 	inline void Stop() { m_Speed = 0.0f; }
-	inline Circle GetBoundingBox() { return m_BoundingBox; }
 
 protected:
 	float m_Speed;
@@ -37,7 +36,6 @@ protected:
 	Vec2D m_LookingDirection;
 
 private:
-	Circle m_BoundingBox;
 	float m_RotationAngle;
 	Vec2D m_Offset;
 };

@@ -19,7 +19,6 @@ public:
 	inline bool IsFinishedPlaying() const { return m_IsFinishedPlaying; }
 	inline uint32_t GetCurrentFrameNumber() const { return m_Frame; }
 
-
 private:
 	uint32_t m_Time;
 	std::vector<Animation> m_Animations;
@@ -29,6 +28,4 @@ private:
 	bool m_Looped;
 	bool m_IsPlaying;
 	bool m_IsFinishedPlaying;
-
-
 };

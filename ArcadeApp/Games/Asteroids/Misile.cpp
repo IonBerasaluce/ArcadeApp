@@ -5,43 +5,40 @@ namespace
 {
 	uint32_t MISILE_WIDTH = 10;
 	uint32_t MISILE_HEIGHT = 10;
-	uint32_t MISILE_SPEED = 2;
+	float MISILE_SPEED = 0.1;
 }
 
 Misile::Misile() :m_Hit(false)
 {
 }
 
-void Misile::Init(const Vec2D& direction, const Vec2D& position)
+void Misile::Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Vec2D& direction, const Vec2D& position, const Colour& spriteColour)
 {
-	m_Direction = direction;
-	m_Boundary = Triangle(position, MISILE_WIDTH, MISILE_HEIGHT);
+	AsteroidsActor::Init(spriteSheet, animationsPath, position, MISILE_SPEED, spriteColour);
 	m_Hit = false;
-
-	// Update the direction of the boundary box
-	Vec2D currentDirection = m_Boundary.GetP0() - m_Boundary.GetCenterPoint();
-	float angle = currentDirection.AngleBetween360(m_Direction);
-	m_Boundary.Rotate(angle);
+	m_LookingDirection = direction;
+	m_MovementDirection = direction;
+	SetFirstAnimation();
 }
 
 void Misile::Update(uint32_t dt, const AARectangle& mapBoundary)
 {
-	Vec2D velocity = m_Direction * MISILE_SPEED;
-	m_Boundary.MoveBy(velocity);
+	Vec2D velocity = m_MovementDirection * MISILE_SPEED;
+	AsteroidsActor::Update(dt);
 }
 
 void Misile::Draw(Screen& screen)
 {
-	screen.Draw(m_Boundary, Colour::Red(), false);
-}
-
-void Misile::MoveTo(Vec2D position)
-{
-	m_Boundary.MoveTo(position);
+	AsteroidsActor::Draw(screen);
 }
 
 void Misile::Hit()
 {
 	m_Hit = true;
 	MoveTo(Vec2D(-1000, 0));
+}
+
+void Misile::SetFirstAnimation()
+{
+	SetAnimation("missile", true);
 }
