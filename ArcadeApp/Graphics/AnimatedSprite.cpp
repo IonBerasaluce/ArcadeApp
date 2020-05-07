@@ -30,7 +30,7 @@ void AnimatedSprite::Draw(Screen& theScreen, const float rotationAngle)
 		frameColour = m_Colour;
 	}
 
-	theScreen.Draw(*m_ptrSpriteSheet, frame.frame, m_Position + frame.offset, frameColour);
+	theScreen.Draw(*m_ptrSpriteSheet, frame.frame, m_Position + frame.offset, frameColour, rotationAngle);
 
 	if (frame.overlay.size() > 0)
 	{

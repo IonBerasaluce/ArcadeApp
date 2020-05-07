@@ -23,7 +23,9 @@ void AsteroidsActor::Update(uint32_t dt)
 
 void AsteroidsActor::Draw(Screen& screen)
 {
-	m_Sprite.Draw(screen, m_RotationAngle);
+	float rotationAngle = m_LookingDirection.AngleBetween360(Vec2D(0, -1));
+
+	m_Sprite.Draw(screen, -1 * rotationAngle);
 	screen.Draw(m_BoundingBox, Colour::Red());
 	Line2D line = {m_BoundingBox.GetCenterPoint(),(m_LookingDirection * 10) + m_BoundingBox.GetCenterPoint()};
 	screen.Draw(line, Colour::Green());

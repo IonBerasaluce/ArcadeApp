@@ -358,7 +358,7 @@ void Screen::Draw(const BMPImage& image, const Sprite& sprite, const Vec2D& pos,
 
 void Screen::Draw(const SpriteSheet& ss, const std::string& spriteName, const Vec2D& position, const Colour& overlayColour, const float rotation)
 {
-	Draw(ss.GetBMPImage(), ss.GetSprite(spriteName), position, overlayColour);
+	Draw(ss.GetBMPImage(), ss.GetSprite(spriteName), position, overlayColour, rotation);
 }
 
 void Screen::Draw(const BitmapFont& font, const std::string& textLine, const Vec2D& position, const Colour& overlayColour)
@@ -433,7 +433,7 @@ void Screen::FillPoly(const std::vector<Vec2D>& points, FillPolyFunc func, float
 		}
 
 		// We need to get the centre point for the rotation here and save the values for sin and cos of rotation angle
-		Vec2D centerPoint = Vec2D((right - left) / 2, (bottom - top) / 2);
+		Vec2D centerPoint = Vec2D((right - left) / 2, (bottom - top) / 2) + Vec2D(left, top);
 		float cosine = cosf(angle);
 		float sine = sinf(angle);
 
@@ -484,11 +484,9 @@ void Screen::FillPoly(const std::vector<Vec2D>& points, FillPolyFunc func, float
 					{
 						// Here the first 2 arguments have to be the rotated pixel locations and func(pixelX, pixelY) has to receive the non-rotated pixels
 						// Update the position of the pixelX and Pixel Y based on the rotated pixel
-
-						//Vec2D rotatedPixel = Vec2D(pixelX, pixelY);
-						//rotatedPixel.Rotate(angle, centerPoint);
-						//Draw((int)rotatedPixel.GetX(), (int)rotatedPixel.GetY(), func(pixelX, pixelY));
-						Draw(pixelX, pixelY, func(pixelX, pixelY));
+						Vec2D rotatedPixel = Vec2D(pixelX, pixelY);
+						rotatedPixel.Rotate(angle, centerPoint);
+						Draw((int)rotatedPixel.GetX(), (int)rotatedPixel.GetY(), func(pixelX, pixelY));
 					}
 				}
 			}
