@@ -7,20 +7,21 @@
 #include "PacmanGameUtils.h"
 #include "Shapes/AARectangle.h"
 #include "Graphics/Colour.h"
+#include "App/Actor.h"
 
 class Screen;
 class SpriteSheet;
 
-class Actor
+class PacmanActor : public Actor
 {
 public:
 
-	virtual ~Actor() {}
+	virtual ~PacmanActor() {}
 	virtual void Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Vec2D& initialPos, uint32_t movementSpeed, bool updateSpriteOnMovement, const Colour& spriteColour = Colour::White());
 	
-	virtual void Update(uint32_t dt);
-	virtual void Draw(Screen& screen);
+	virtual void Update(uint32_t dt) override;
 	virtual void Stop();
+
 	virtual inline void SetMovementDirection(PacmanMovement direction) { m_MovementDirection = direction; }
 
 	AARectangle GetEatingBoundingBox() const;
@@ -29,18 +30,11 @@ public:
 	inline const AARectangle GetBoundingBox() const { return m_Sprite.GetBoundingBox(); }
 	inline void MoveBy(const Vec2D& delta) { m_Sprite.MoveBy(delta); }
 	inline void MoveTo(const Vec2D& position) { m_Sprite.SetPosition(position); }
-	inline Vec2D Position() const { return m_Sprite.Position(); }
 	inline PacmanMovement GetMovementDirection() const { return m_MovementDirection; }
-	inline const Colour& GetSpriteColour() const { return m_Sprite.GetColour(); }
 
-
-protected:
-	void SetAnimation(const std::string& animationName, bool looped);
-	
+protected:	
 	inline void ResetDelta() { m_Delta = Vec2D::Zero; }
 	inline void SetMovementSpeed(uint32_t movementSpeed) { m_MovementSpeed = movementSpeed; }
-
-	AnimatedSprite m_Sprite;
 
 private:
 	Vec2D m_Delta;

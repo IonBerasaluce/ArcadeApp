@@ -144,9 +144,6 @@
     <ClCompile Include="Games\Pacman\PacmanGameUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Games\Pacman\Actor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Games\Pacman\PacmanPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -169,6 +166,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Games\Asteroids\Asteroid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Games\Pacman\PacmanActor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Actor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -311,9 +314,6 @@
     <ClInclude Include="Games\Pacman\PacmanGameUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Games\Pacman\Actor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Games\Pacman\PacmanPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -336,6 +336,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Games\Asteroids\Asteroid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Games\Pacman\PacmanActor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Actor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

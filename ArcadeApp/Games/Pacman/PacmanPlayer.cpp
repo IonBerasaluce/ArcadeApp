@@ -3,7 +3,7 @@
 
 void PacmanPlayer::Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Vec2D& initialPos, uint32_t movementSpeed, bool updateSpriteOnMovement, const Colour& spriteColour)
 {
-	Actor::Init(spriteSheet, animationsPath, initialPos, movementSpeed, false, spriteColour );
+	PacmanActor::Init(spriteSheet, animationsPath, initialPos, movementSpeed, false, spriteColour );
 
 	ResetToFirstAnimation();
 	ResetScore();
@@ -20,7 +20,7 @@ void PacmanPlayer::Update(uint32_t dt)
 		return;
 	}
 	
-	Actor::Update(dt);
+	PacmanActor::Update(dt);
 }
 
 void PacmanPlayer::SetMovementDirection(PacmanMovement direction)
@@ -48,7 +48,7 @@ void PacmanPlayer::SetMovementDirection(PacmanMovement direction)
 		ResetDelta();
 	}
 
-	Actor::SetMovementDirection(direction);
+	PacmanActor::SetMovementDirection(direction);
 }
 
 void PacmanPlayer::ResetToFirstAnimation()

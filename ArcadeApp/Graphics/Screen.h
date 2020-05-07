@@ -45,7 +45,7 @@ public:
 	void Draw(const AARectangle& rectangle, const Colour& colour, bool fill = false, const Colour& fillColour = Colour::White());
 	void Draw(const Circle& circle, const Colour& colour, bool fill = false, const Colour& fillColour = Colour::White());
 
-	void Draw(const BMPImage& image, const Sprite& sprite, const Vec2D& pos, const Colour& overlayColour = Colour::White());
+	void Draw(const BMPImage& image, const Sprite& sprite, const Vec2D& pos, const Colour& overlayColour = Colour::White(), float rotation = 0.0f);
 	void Draw(const SpriteSheet& ss, const std::string& spriteName, const Vec2D& position, const Colour& overlayColour = Colour::White());
 	void Draw(const BitmapFont& font, const std::string& textLine, const Vec2D& position, const Colour& overlayColour = Colour::White());
 
@@ -58,7 +58,7 @@ private:
 	using FillPolyFunc = std::function<Colour(uint32_t x, uint32_t y)>;
 
 	void ClearScreen();
-	void FillPoly(const std::vector<Vec2D>& points, FillPolyFunc func);
+	void FillPoly(const std::vector<Vec2D>& points, FillPolyFunc func, float angle = 0.0f);
 
 	uint32_t mWidth;
 	uint32_t mHeight;

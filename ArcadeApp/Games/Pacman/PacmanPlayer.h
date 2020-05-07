@@ -1,10 +1,10 @@
 #pragma once
-#include "Actor.h"
+#include "PacmanActor.h"
 
 class Screen;
 class SpriteSheet;
 
-class PacmanPlayer : public Actor
+class PacmanPlayer : public PacmanActor
 {
 public:
 	virtual void Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Vec2D& initialPos, uint32_t movementSpeed, bool updateSpriteOnMovement, const Colour& spriteColour = Colour::White());

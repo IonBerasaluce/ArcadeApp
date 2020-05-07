@@ -6,7 +6,7 @@ Ghost::Ghost():m_Points(0), m_InitialPos(Vec2D::Zero), m_IsReleased(false), m_De
 
 void Ghost::Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Vec2D& initialPos, uint32_t movementSpeed, bool updateSpriteOnMovement, const Colour& spriteColour)
 {
-	Actor::Init(spriteSheet, animationsPath, initialPos, movementSpeed, false, spriteColour);
+	PacmanActor::Init(spriteSheet, animationsPath, initialPos, movementSpeed, false, spriteColour);
 	m_InitialPos = initialPos;
 	m_Points = NUM_POINTS_FOR_GHOST;
 	m_VulnerabilityTimer = VULNERABILITY_TIME;
@@ -17,7 +17,7 @@ void Ghost::Update(uint32_t dt)
 {
 	Vec2D position = Position();
 
-	Actor::Update(dt);
+	PacmanActor::Update(dt);
 
 	m_CanChangeDirection = position != Position();
 
@@ -46,7 +46,7 @@ void Ghost::SetStateToVulnerable()
 
 void Ghost::SetMovementDirection(PacmanMovement direction)
 {
-	Actor::SetMovementDirection(direction);
+	PacmanActor::SetMovementDirection(direction);
 	PacmanMovement movementDir = GetMovementDirection();
 
 	if (m_State == GHOST_STATE_ALIVE)

@@ -1,16 +1,15 @@
-#include "Actor.h"
+#include "PacmanActor.h"
 
-void Actor::Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Vec2D& initialPos, uint32_t movementSpeed, bool updateSpriteOnMovement, const Colour& spriteColour)
+void PacmanActor::Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Vec2D& initialPos, uint32_t movementSpeed, bool updateSpriteOnMovement, const Colour& spriteColour)
 {
+	Actor::Init(spriteSheet, animationsPath, initialPos, spriteColour);
 	m_MovementDirection = PACMAN_MOVE_NONE;
-	m_Sprite.Init(animationsPath, spriteSheet, spriteColour);
 	m_UpdateSpriteOnUpdate = updateSpriteOnMovement;
 	m_MovementSpeed = movementSpeed;
 	m_Delta = Vec2D::Zero;
-	m_Sprite.SetPosition(initialPos);
 }
 
-void Actor::Update(uint32_t dt)
+void PacmanActor::Update(uint32_t dt)
 {
 	if (m_MovementDirection != PACMAN_MOVE_NONE)
 	{
@@ -51,30 +50,20 @@ void Actor::Update(uint32_t dt)
 		}
 		m_Sprite.Update(dt);
 	}
-	// Handling moving actors during paused stated
+	// Handling moving PacmanActors during paused stated
 	if (m_UpdateSpriteOnUpdate && m_MovementDirection == PACMAN_MOVE_NONE)
 	{
 		m_Sprite.Update(dt);
 	}
 }
 
-void Actor::Draw(Screen& screen)
-{
-	m_Sprite.Draw(screen);
-}
-
-void Actor::Stop()
+void PacmanActor::Stop()
 {
 	SetMovementDirection(PACMAN_MOVE_NONE);
 	m_Sprite.Stop();
 }
 
-AARectangle Actor::GetEatingBoundingBox() const
+AARectangle PacmanActor::GetEatingBoundingBox() const
 {
 	return AARectangle::Inset(GetBoundingBox(), Vec2D(3, 3));
-}
-
-void Actor::SetAnimation(const std::string& animationName, bool looped)
-{
-	m_Sprite.SetAnimation(animationName, looped);
 }

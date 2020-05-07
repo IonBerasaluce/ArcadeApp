@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Actor.h"
+#include "PacmanActor.h"
 #include "Graphics/Colour.h"
 #include "PacmanGameUtils.h"
 #include "Shapes/AARectangle.h"
@@ -32,7 +32,7 @@ public:
 	virtual void GhostWasResetToFirstposition() = 0;
 };
 
-class Ghost : public Actor
+class Ghost : public PacmanActor
 {
 public:
 	static const uint32_t VULNERABILITY_TIME = 6000;

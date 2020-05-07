@@ -305,7 +305,7 @@ void Screen::Draw(const Circle& circle, const Colour& colour, bool fill, const C
 }
 
 
-void Screen::Draw(const BMPImage& image, const Sprite& sprite, const Vec2D& pos, const Colour& overlayColour)
+void Screen::Draw(const BMPImage& image, const Sprite& sprite, const Vec2D& pos, const Colour& overlayColour, float rotation)
 {
 	
 	float rVal = static_cast<float>(overlayColour.GetRed()) / 255.0f;
@@ -318,6 +318,7 @@ void Screen::Draw(const BMPImage& image, const Sprite& sprite, const Vec2D& pos,
 
 	const std::vector<Colour>& pixels = image.GetPixels();
 
+	// This is the position of where we will place the sprite on the screen
 	Vec2D topLeft = pos;
 	Vec2D topRight = pos + Vec2D(width, 0);
 	Vec2D bottomLeft = pos + Vec2D(0, height);
@@ -328,6 +329,7 @@ void Screen::Draw(const BMPImage& image, const Sprite& sprite, const Vec2D& pos,
 	Vec2D xAxis = topRight - topLeft;
 	Vec2D yAxis = bottomLeft - topLeft;
 
+	// Less than one since we divide by the sprite width squared
 	const float invXAxisLengthSq = 1.0f / xAxis.Mag2();
 	const float invYAxisLengthSq = 1.0f / yAxis.Mag2();
 
@@ -351,7 +353,7 @@ void Screen::Draw(const BMPImage& image, const Sprite& sprite, const Vec2D& pos,
 			Colour nc = { static_cast<uint8_t>(c.GetRed() * rVal), static_cast<uint8_t>(c.GetGreen() * gVal), static_cast<uint8_t>(c.GetBlue() * bVal), static_cast<uint8_t>(c.GetAlpha() * aVal) };
 
 			return nc;
-	});
+	}, rotation);
 }
 
 void Screen::Draw(const SpriteSheet& ss, const std::string& spriteName, const Vec2D& position, const Colour& overlayColour)
@@ -399,10 +401,11 @@ void Screen::ClearScreen()
 
 }
 
-void Screen::FillPoly(const std::vector<Vec2D>& points, FillPolyFunc func)
+void Screen::FillPoly(const std::vector<Vec2D>& points, FillPolyFunc func, float angle)
 {
 	if (points.size() > 0)
 	{
+		// Get the boundary from the pixel points
 		float top = points[0].GetY();
 		float bottom = points[0].GetY();
 		float right = points[0].GetX();
@@ -428,16 +431,26 @@ void Screen::FillPoly(const std::vector<Vec2D>& points, FillPolyFunc func)
 			}
 			
 		}
+
+		// We need to get the centre point for the rotation here and save the values for sin and cos of rotation angle
+		Vec2D centerPoint = Vec2D((right - left) / 2, (bottom - top) / 2);
+		float cosine = cosf(angle);
+		float sine = sinf(angle);
+
+		// Scan line fill poly algorithm
 		for (int pixelY = top; pixelY < bottom; ++pixelY)
 		{
+			// These are the x-intercepts
 			std::vector<float> nodeXVec;
 			size_t j = points.size() - 1;
+
 
 			for (size_t i = 0; i < points.size(); i++)
 			{
 				float pointiY = points[i].GetY();
 				float pointjY = points[j].GetY();
 				
+				// Finding the intercepts of the line with the borders of the shape. Points are ordered in Topleft, bottomLeft, bottomRight and topright
 				if ((pointiY <= (float)pixelY && pointjY > (float)pixelY) || (pointjY <= (float)pixelY && pointiY > (float)pixelY))
 				{
 					float den = pointjY - pointiY;
@@ -456,10 +469,6 @@ void Screen::FillPoly(const std::vector<Vec2D>& points, FillPolyFunc func)
 			
 			for (size_t k = 0; k < nodeXVec.size(); k += 2)
 			{
-				if (nodeXVec[k] > right)
-				{
-					break;
-				}
 				if (nodeXVec[k + 1] > left)
 				{
 					if (nodeXVec[k] < left)
@@ -473,7 +482,12 @@ void Screen::FillPoly(const std::vector<Vec2D>& points, FillPolyFunc func)
 					
 					for (int pixelX = nodeXVec[k]; pixelX < nodeXVec[k + 1]; ++pixelX)
 					{
-						Draw(pixelX, pixelY, func(pixelX, pixelY));
+						// Here the first 2 arguments have to be the rotated pixel locations and func(pixelX, pixelY) has to receive the non-rotated pixels
+						// Update the position of the pixelX and Pixel Y based on the rotated pixel
+
+						Vec2D rotatedPixel = Vec2D(pixelX, pixelY);
+						rotatedPixel.Rotate(angle, centerPoint);
+						Draw((int)rotatedPixel.GetX(), (int)rotatedPixel.GetY(), func(pixelX, pixelY));
 					}
 				}
 			}
