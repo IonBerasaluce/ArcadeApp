@@ -69,22 +69,18 @@ void AsteroidsGame::Init(GameController& controller)
 
 void AsteroidsGame::Update(uint32_t dt)
 {
+	m_Player.Update(dt, m_MapBoundary);
 	CalculateCollisions(m_Player);
 
-	// Generate new asteroids as time passes
-	m_Accumulator += dt;
-	if (m_Accumulator >= 1000)
-	{
-		if (m_Asteroids.size() < 15)
-		{
-			GenerateAsteroids(1);
-			m_Accumulator = 0;
-		}
-	}
-	
-	m_Player.Update(dt, m_MapBoundary);
-
 	// Update the misiles
+	UpdateMisiles(dt);
+
+	// Update the Asteroids
+	UpdateAsteroids(dt);
+}
+
+void AsteroidsGame::UpdateMisiles(uint32_t dt)
+{
 	if (m_Misiles.size() > 0)
 	{
 		for (size_t i = 0; i < m_Misiles.size(); i++)
@@ -100,7 +96,10 @@ void AsteroidsGame::Update(uint32_t dt)
 	{
 		m_Misiles.erase(i);
 	}
+}
 
+void AsteroidsGame::UpdateAsteroids(uint32_t dt)
+{
 	size_t size = m_Asteroids.size();
 
 	for (size_t i = 0; i < size; i++)
@@ -111,7 +110,7 @@ void AsteroidsGame::Update(uint32_t dt)
 			GenerateAsteroids(2, currentAsteroid.Position(), static_cast<AsteroidSize>(currentAsteroid.GetSize() - 1));
 		}
 	}
-	
+
 	// Delete the destroyed asteroids from the map
 	auto k = remove_if(m_Asteroids.begin(), m_Asteroids.end(), [&](Asteroid asteroid) { return asteroid.IsDestroyed(); });
 	if (k != m_Asteroids.end())
@@ -133,7 +132,18 @@ void AsteroidsGame::Update(uint32_t dt)
 		GenerateAsteroids(3);
 	}
 
+	// Generate new asteroids as time passes
+	m_Accumulator += dt;
+	if (m_Accumulator >= 1000)
+	{
+		if (m_Asteroids.size() < 15)
+		{
+			GenerateAsteroids(1);
+			m_Accumulator = 0;
+		}
+	}
 }
+
 
 void AsteroidsGame::Draw(Screen& screen)
 {
@@ -268,6 +278,12 @@ void AsteroidsGame::ResetGame()
 	m_Asteroids.clear();
 	m_Misiles.clear();
 	m_Accumulator = 0;
+	GenerateAsteroids(3);
+}
+
+void AsteroidsGame::ResetAsteroids()
+{
+	m_Asteroids.clear();
 	GenerateAsteroids(3);
 }
 

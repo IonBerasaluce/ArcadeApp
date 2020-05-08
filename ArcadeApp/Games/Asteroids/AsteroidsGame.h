@@ -52,6 +52,9 @@ public:
 private:
 	void ShootMissile(const Vec2D& position, const Vec2D& direction);
 	void ResetGame();
+	void ResetAsteroids();
+	void UpdateMisiles(uint32_t dt);
+	void UpdateAsteroids(uint32_t dt);
 
 private:
 	Player m_Player;
