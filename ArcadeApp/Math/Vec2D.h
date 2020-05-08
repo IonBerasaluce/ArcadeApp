@@ -37,6 +37,7 @@ public:
 	Vec2D GetUnitVec() const;
 	Vec2D& Normalize();
 	Vec2D Normal() const;
+	Vec2D Round() const;
 	float Distance(const Vec2D& vec) const;
 	float Dot(const Vec2D& vec) const;
 	float Det(const Vec2D& vec) const;

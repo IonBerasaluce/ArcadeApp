@@ -4,7 +4,7 @@
 #include "App/App.h"
 
 const float Player::PLAYER_ACCELERATION = 0.005f;
-const float Player::MAX_SPEED = 0.1f;
+const float Player::MAX_SPEED = 0.05f;
 
 Player::Player(): m_Lives(3), m_Score(0), m_PlayerState(AsteroidsPlayerStates::DEAD)
 {
@@ -44,7 +44,6 @@ void Player::Update(uint32_t dt, const AARectangle& boundary)
 void Player::Accelerate(uint32_t dt)
 {
 	//SetAnimation("thrusters", false);
-
 	Vec2D currentVelocity = m_MovementDirection * m_Speed;
 
 	Vec2D acceleration = m_LookingDirection * PLAYER_ACCELERATION * (float)dt;

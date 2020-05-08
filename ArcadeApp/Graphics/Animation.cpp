@@ -135,7 +135,7 @@ std::vector<Animation> Animation::LoadAnimations(const std::string& animationFil
 	frameOffsetsCommand.commandType = COMMAND_MULTI_LINE;
 	frameOffsetsCommand.parseFunc = [&](ParseFunctionParams params)
 	{
-		animations.back().AddOverlayFrameColour(FileCommandLoader::ReadColour(params));
+		animations.back().AddOverlayFrameOffset(FileCommandLoader::ReadSize(params));
 	};
 
 	fileLoader.AddCommand(frameOffsetsCommand);

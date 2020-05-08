@@ -14,10 +14,11 @@ public:
 	void Update(uint32_t dt, const AARectangle& boundary);
 	void Draw(Screen& screen);
 
-	void Hit();
+	void Hit(bool exploding);
 	void SetFirstAnimation();
 	inline bool IsHit() const { return m_Hit; }
 
 private:
 	bool m_Hit;
+	bool m_Exploding;
 };

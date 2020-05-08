@@ -6,7 +6,7 @@
 class Screen;
 class AARectangle;
 
-enum AsteroidSize
+enum class AsteroidSize
 {
 	SMALL = 0,
 	MEDIUM,
@@ -47,6 +47,7 @@ private:
 
 	SpriteSheet m_SpriteSheet;
 	Sprite m_Sprite;
+	AARectangle m_SpriteBox;
 
 	static const float m_RotatingSpeed;
 	static const float m_Speed;

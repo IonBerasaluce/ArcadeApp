@@ -96,7 +96,7 @@ void AsteroidsGame::Update(uint32_t dt)
 
 	for (size_t i = 0; i < size; i++)
 	{
-		if (m_Asteroids[i].IsDestroyed() && m_Asteroids[i].GetSize() > 1 && m_Asteroids[i].Reproduce())
+		if (m_Asteroids[i].IsDestroyed() && m_Asteroids[i].GetSize() > 0 && m_Asteroids[i].Reproduce())
 		{
 			Asteroid currentAsteroid = m_Asteroids[i];
 			GenerateAsteroids(2, static_cast<AsteroidSize>(currentAsteroid.GetSize() - 1), currentAsteroid.Position());
@@ -121,7 +121,7 @@ void AsteroidsGame::Update(uint32_t dt)
 	}
 	else
 	{
-		GenerateAsteroids(m_NumAsteroids + 1, AsteroidSize::EXTRALARGE);
+		//GenerateAsteroids(m_NumAsteroids + 1, AsteroidSize::EXTRALARGE);
 	}
 
 }
@@ -134,10 +134,7 @@ void AsteroidsGame::Draw(Screen& screen)
 	{
 		for (auto& misile : m_Misiles)
 		{
-			if (!misile.IsHit())
-			{
-				misile.Draw(screen);
-			}
+			misile.Draw(screen);
 		}
 	}
 
@@ -169,7 +166,7 @@ void AsteroidsGame::CalculateCollisions(Player& player)
 				float distance = m_Asteroids[i].Position().Distance(m_Misiles[j].Position());
 				if (distance < m_Asteroids[i].GetRadious())
 				{
-					m_Misiles[j].Hit();
+					m_Misiles[j].Hit(m_Asteroids[i].GetSize() == 0);
 					m_Asteroids[i].Hit();
 				}
 			}
@@ -177,7 +174,7 @@ void AsteroidsGame::CalculateCollisions(Player& player)
 	}
 }
 
-void AsteroidsGame::GenerateAsteroids(const int n, AsteroidSize size, const Vec2D& position)
+void AsteroidsGame::GenerateAsteroids(const int n, const Vec2D& position)
 {
 	Vec2D newPosition;
 	Vec2D randomDir;
@@ -222,13 +219,14 @@ void AsteroidsGame::ShootMissile(const Vec2D& position, const Vec2D& direction)
 void AsteroidsGame::ResetGame()
 {
 	// When creating the boundary we make it slightly bigger than the screen to improve the wrap effect
-	m_MapBoundary = { Vec2D(-10.0f, -10.0f), Vec2D((float)(App::Singleton().Width() + 10), (float)(App::Singleton().Height() + 10)) };
+	//m_MapBoundary = { Vec2D(-10.0f, -10.0f), Vec2D((float)(App::Singleton().Width() + 10), (float)(App::Singleton().Height() + 10)) };
+	m_MapBoundary = { Vec2D::Zero, Vec2D((float)(App::Singleton().Width()), (float)(App::Singleton().Height())) };
 
 	m_Player.Reset();
 	
 	m_Asteroids.clear();
 	m_Misiles.clear();
-	GenerateAsteroids(2, AsteroidSize::EXTRALARGE);
+	GenerateAsteroids(1, AsteroidSize::EXTRALARGE);
 }
 
 const std::string& AsteroidsGame::GetName() const

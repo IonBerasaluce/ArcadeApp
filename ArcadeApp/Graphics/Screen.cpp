@@ -318,12 +318,15 @@ void Screen::Draw(const BMPImage& image, const Sprite& sprite, const Vec2D& pos,
 
 	const std::vector<Colour>& pixels = image.GetPixels();
 
+	Vec2D spritePos = Vec2D(sprite.xPos, sprite.yPos);
+
 	// This is the position of where we will place the sprite on the screen
 	Vec2D topLeft = pos;
-	Vec2D topRight = pos + Vec2D((float)width, 0);
-	Vec2D bottomLeft = pos + Vec2D(0, (float)height);
+	Vec2D topRight = pos + Vec2D((float)width, 0.0f);
+	Vec2D bottomLeft = pos + Vec2D(0.0f, (float)height);
 	Vec2D bottomRight = pos + Vec2D((float)width, (float)height);
 
+	// Points in the screen
 	std::vector<Vec2D> points = { topLeft, bottomLeft, bottomRight, topRight };
 
 	Vec2D xAxis = topRight - topLeft;
@@ -339,8 +342,8 @@ void Screen::Draw(const BMPImage& image, const Sprite& sprite, const Vec2D& pos,
 			Vec2D d = p - topLeft;
 
 			// Value from 0 to 1 from where we are drawing in the screen no matter if the object is rotated or scaled
-			float u = invXAxisLengthSq * d.Dot(xAxis);
-			float v = invYAxisLengthSq * d.Dot(yAxis);
+			float u = fabsf(invXAxisLengthSq * d.Dot(xAxis));
+			float v = fabsf(invYAxisLengthSq * d.Dot(yAxis));
 
 			u = Clamp(u, 0.0f, 1.0f);
 			v = Clamp(v, 0.0f, 1.0f);
@@ -482,11 +485,29 @@ void Screen::FillPoly(const std::vector<Vec2D>& points, FillPolyFunc func, float
 					
 					for (int pixelX = (int)nodeXVec[k]; pixelX < nodeXVec[k + 1]; ++pixelX)
 					{
-						// Here the first 2 arguments have to be the rotated pixel locations and func(pixelX, pixelY) has to receive the non-rotated pixels
 						// Update the position of the pixelX and Pixel Y based on the rotated pixel
-						Vec2D rotatedPixel = Vec2D((float)pixelX, (float)pixelY);
-						rotatedPixel.Rotate(angle, centerPoint);
-						Draw((int)rotatedPixel.GetX(), (int)rotatedPixel.GetY(), func(pixelX, pixelY));
+						// Wrap and rotate the pixels
+						Vec2D transformedPixels = Vec2D((float)pixelX, (float)pixelY);
+						transformedPixels.Rotate(angle, centerPoint);
+
+						if (transformedPixels.GetX() < 0.0f)
+						{
+							transformedPixels += Vec2D((float)mWidth, 0.0f);
+						}
+						if (transformedPixels.GetX() > mWidth)
+						{
+							transformedPixels -= Vec2D((float)mWidth, 0.0f);
+						}
+						if (transformedPixels.GetY() < 0.0f)
+						{
+							transformedPixels += Vec2D(0.0f, (float)mHeight);
+						}
+						if (transformedPixels.GetY() > mHeight)
+						{
+							transformedPixels -= Vec2D(0.0f, (float)mHeight);
+						}
+
+						Draw((int)roundf(transformedPixels.GetX()), (int)roundf(transformedPixels.GetY()), func(pixelX, pixelY));
 					}
 				}
 			}

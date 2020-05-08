@@ -47,7 +47,7 @@ public:
 
 	void CalculateCollisions(Player& player);
 
-	void GenerateAsteroids(const int n, AsteroidSize size, const Vec2D& position = Vec2D::Zero);
+	void GenerateAsteroids(const int n, const Vec2D& position = Vec2D::Zero);
 
 private:
 	void ShootMissile(const Vec2D& position, const Vec2D& direction);

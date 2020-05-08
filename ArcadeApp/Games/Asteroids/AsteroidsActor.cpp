@@ -19,6 +19,7 @@ void AsteroidsActor::Update(uint32_t dt)
 {
 	Vec2D velocity = m_MovementDirection * (float)dt * m_Speed;
 	m_Sprite.MoveBy(velocity);
+	m_Sprite.Update(dt);
 }
 
 void AsteroidsActor::Draw(Screen& screen)
@@ -30,22 +31,22 @@ void AsteroidsActor::Draw(Screen& screen)
 
 void AsteroidsActor::WrapAroundBoundary(const AARectangle& boundary)
 {
-	Vec2D centrePoint = m_Sprite.GetBoundingBox().GetTopLeft();
-	Vec2D position = centrePoint;
+	Vec2D topLeft = m_Sprite.GetBoundingBox().GetTopLeft();
+	Vec2D position = topLeft;
 
-	if (centrePoint.GetX() < boundary.GetTopLeft().GetX())
+	if (topLeft.GetX() < boundary.GetTopLeft().GetX())
 	{
 		position += Vec2D(boundary.GetWidth(), 0);
 	}
-	if (centrePoint.GetX() >= boundary.GetBottomRight().GetX())
+	if (topLeft.GetX() >= boundary.GetBottomRight().GetX())
 	{
 		position -= Vec2D(boundary.GetWidth(), 0);
 	}
-	if (centrePoint.GetY() < boundary.GetTopLeft().GetY())
+	if (topLeft.GetY() < boundary.GetTopLeft().GetY())
 	{
 		position += Vec2D(0, boundary.GetHeight());
 	}
-	if (centrePoint.GetY() >= boundary.GetBottomRight().GetY())
+	if (topLeft.GetY() >= boundary.GetBottomRight().GetY())
 	{
 		position -= Vec2D(0, boundary.GetHeight());
 	}

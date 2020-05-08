@@ -98,6 +98,11 @@ Vec2D Vec2D::Normal() const
 	return normal;
 }
 
+Vec2D Vec2D::Round() const
+{
+	return Vec2D(roundf(mX), roundf(mY));
+}
+
 float Vec2D::Distance(const Vec2D& vec) const
 {
 	return (*this - vec).Mag();
