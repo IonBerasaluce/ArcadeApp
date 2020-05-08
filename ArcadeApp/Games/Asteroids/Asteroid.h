@@ -29,6 +29,7 @@ public:
 	inline Vec2D const Position() const { return m_CollisionBoundary.GetCenterPoint(); }
 	inline Circle const GetCollisionBox() const{ return m_CollisionBoundary; }
 	inline bool Reproduce() const { return m_Reproduce; }
+	int const GetScore() const;
 
 	void Hit(const bool split = true);
 

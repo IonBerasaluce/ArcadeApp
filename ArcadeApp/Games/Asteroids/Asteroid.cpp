@@ -38,6 +38,30 @@ void Asteroid::Update(uint32_t dt, const AARectangle& boundary)
 	WrapAroundBoundary(boundary);
 }
 
+int const Asteroid::GetScore() const
+{
+	
+	switch (m_Size)
+	{
+	case SMALL:
+		return 100;
+		break;
+	case MEDIUM:
+		return 50;
+		break;
+	case LARGE:
+		return 50;
+		break;
+	case EXTRALARGE:
+		return 10;
+		break;
+	case NONE:
+		return 0;
+	default:
+		break;
+	}
+}
+
 void Asteroid::Hit(const bool split)
 {
 	m_Destroyed = true;

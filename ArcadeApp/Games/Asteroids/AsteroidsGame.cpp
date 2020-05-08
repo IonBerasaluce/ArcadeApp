@@ -8,6 +8,11 @@
 
 #include "Inputs/GameController.h"
 
+namespace
+{
+	const uint32_t LEVEL_STARTING_TIME = 3000;
+}
+
 void AsteroidsGame::Init(GameController& controller)
 {
 	// Init the player
@@ -64,19 +69,67 @@ void AsteroidsGame::Init(GameController& controller)
 
 	controller.AddInputActionForKey(fireAction);
 
+	ButtonAction backAction;
+	backAction.key = GameController::CancelKey();
+	backAction.action = [this](uint32_t dt, InputState state)
+	{
+		if (m_GameState == AsteroidsGameState::GAME_OVER && GameController::IsPressed(state))
+		{
+			// Go back to the starting scene
+			App::Singleton().PopScene();
+		}
+	};
+
+	controller.AddInputActionForKey(backAction);
+
 	ResetGame();
+
 }
 
 void AsteroidsGame::Update(uint32_t dt)
 {
-	m_Player.Update(dt, m_MapBoundary);
-	CalculateCollisions(m_Player);
+	// Have 3 Game states: In play, In serve and In Game over
+	if (m_GameState == AsteroidsGameState::LEVEL_STARTING)
+	{
+		m_LevelStartingTimer += dt;
+		if (m_LevelStartingTimer >= LEVEL_STARTING_TIME)
+		{
+			m_LevelStartingTimer = 0;
+			m_GameState = AsteroidsGameState::PLAY_GAME;
+		}
+	}
+	else if (m_GameState == AsteroidsGameState::PLAY_GAME)
+	{
+		m_Player.Update(dt, m_MapBoundary);
+		UpdateMisiles(dt);
+		UpdateAsteroids(dt);
+		CalculateCollisions(m_Player);
+	}
+	else if (m_GameState == AsteroidsGameState::LOSS_LIFE)
+	{
+		// Let the misiles and the player finish their dying animations
+		m_Player.Update(dt, m_MapBoundary);
+		UpdateMisiles(dt);
 
-	// Update the misiles
-	UpdateMisiles(dt);
+		bool finishedMisileAnimation = true;
+		for (const auto& misile : m_Misiles)
+		{
+			finishedMisileAnimation *= misile.IsFinishedAnimation();
+		}
 
-	// Update the Asteroids
-	UpdateAsteroids(dt);
+		if (m_Player.IsFinishedAnimation() && finishedMisileAnimation)
+		{
+			if (m_Player.GetLives() > 0)
+			{
+				ResetPlayer();
+			}
+			else
+			{
+				// Update the high score table
+				m_GameState = AsteroidsGameState::GAME_OVER;
+			}
+		}
+	}
 }
 
 void AsteroidsGame::UpdateMisiles(uint32_t dt)
@@ -88,7 +141,6 @@ void AsteroidsGame::UpdateMisiles(uint32_t dt)
 			// Update the misile and check if it should exist
 			m_Misiles[i].Update(dt, m_MapBoundary);
 		}
-
 	}
 
 	auto i = remove_if(m_Misiles.begin(), m_Misiles.end(), [&](Misile misile) { return !m_MapBoundary.ContainsPoint(misile.Position()); });
@@ -101,7 +153,8 @@ void AsteroidsGame::UpdateMisiles(uint32_t dt)
 void AsteroidsGame::UpdateAsteroids(uint32_t dt)
 {
 	size_t size = m_Asteroids.size();
-
+	
+	// Generate 2 new asteroids when a big one is destroyed
 	for (size_t i = 0; i < size; i++)
 	{
 		if (m_Asteroids[i].IsDestroyed() && m_Asteroids[i].GetSize() > 0 && m_Asteroids[i].Reproduce())
@@ -171,10 +224,12 @@ void AsteroidsGame::CalculateCollisions(Player& player)
 {
 	for (size_t i = 0; i < m_Asteroids.size(); i++)
 	{
+		// Collision Asteroid to player
 		if (m_Asteroids[i].GetCollisionBox().Intersect(m_Player.GetCollisionBox()))
 		{
 			m_Asteroids[i].Hit(false);
 			m_Player.CrashedIntoAsteroid();
+			m_GameState = AsteroidsGameState::LOSS_LIFE;
 		}
 
 		// Collision Asteroid to missile
@@ -182,11 +237,11 @@ void AsteroidsGame::CalculateCollisions(Player& player)
 		{
 			if (!m_Misiles[j].IsHit())
 			{
-				float distance = m_Asteroids[i].Position().Distance(m_Misiles[j].Position());
-				if (distance < m_Asteroids[i].GetRadious())
+				if (m_Asteroids[i].GetCollisionBox().Intersect(m_Misiles[j].GetCollisionBox()))
 				{
 					m_Misiles[j].Hit(m_Asteroids[i].GetSize() == 0);
 					m_Asteroids[i].Hit();
+					m_Player.AddToScore(m_Asteroids[i].GetScore());
 				}
 			}
 		}
@@ -270,15 +325,23 @@ void AsteroidsGame::ShootMissile(const Vec2D& position, const Vec2D& direction)
 	}
 }
 
-
 void AsteroidsGame::ResetGame()
 {
 	m_MapBoundary = { Vec2D::Zero, Vec2D((float)(App::Singleton().Width()), (float)(App::Singleton().Height())) };
 	m_Player.Reset();
-	m_Asteroids.clear();
-	m_Misiles.clear();
 	m_Accumulator = 0;
-	GenerateAsteroids(3);
+	m_Misiles.clear();
+	ResetAsteroids();
+	m_GameState = AsteroidsGameState::LEVEL_STARTING;
+}
+
+void AsteroidsGame::ResetPlayer()
+{
+	m_Player.ResetPosition();
+	m_Player.ResetToFirstAnimation();
+	ResetAsteroids();
+	
+	m_GameState = AsteroidsGameState::LEVEL_STARTING;
 }
 
 void AsteroidsGame::ResetAsteroids()

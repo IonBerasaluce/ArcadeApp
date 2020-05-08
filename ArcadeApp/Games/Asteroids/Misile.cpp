@@ -15,9 +15,10 @@ Misile::Misile() :m_Hit(false), m_Exploding(false)
 void Misile::Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Vec2D& direction, const Vec2D& position, const Colour& spriteColour)
 {
 	AsteroidsActor::Init(spriteSheet, animationsPath, position, MISILE_SPEED, spriteColour);
-	m_Hit = false;
 	m_LookingDirection = direction;
 	m_MovementDirection = direction;
+	m_CollisionBoundary = Circle(Vec2D::Zero, m_Sprite.GetBoundingBox().GetHeight() / 2);
+	m_Hit = false;
 	SetFirstAnimation();
 }
 
@@ -36,11 +37,7 @@ void Misile::Update(uint32_t dt, const AARectangle& mapBoundary)
 
 	Vec2D velocity = m_MovementDirection * MISILE_SPEED;
 	AsteroidsActor::Update(dt);
-}
-
-void Misile::Draw(Screen& screen)
-{
-	AsteroidsActor::Draw(screen);
+	m_CollisionBoundary.MoveTo(m_Sprite.GetBoundingBox().GetCenterPoint());
 }
 
 void Misile::Hit(bool exploding)

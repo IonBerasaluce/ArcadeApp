@@ -3,10 +3,12 @@
 #include "Shapes/AARectangle.h"
 #include "App/App.h"
 
+#include <iostream>
+
 const float Player::PLAYER_ACCELERATION = 0.005f;
 const float Player::MAX_SPEED = 0.05f;
 
-Player::Player(): m_Lives(3), m_Score(0), m_PlayerState(AsteroidsPlayerStates::DEAD)
+Player::Player(): m_Lives(3), m_Score(0), m_IsDying(false)
 {
 }
 
@@ -20,20 +22,11 @@ void Player::Init(const SpriteSheet& spriteSheet, const std::string& animationsP
 
 void Player::Update(uint32_t dt, const AARectangle& boundary)
 {
-	if (m_PlayerState == AsteroidsPlayerStates::DYING)
+	if (m_IsDying)
 	{
-		m_Sprite.Update(dt);
-		if (IsFinishedAnimation())
-		{
-			m_PlayerState = AsteroidsPlayerStates::DEAD;
-		}
+		AsteroidsActor::Update(dt);
+		m_IsDying = !IsFinishedAnimation();
 		return;
-	}
-
-	if (m_PlayerState == AsteroidsPlayerStates::DEAD)
-	{
-		LossLife();
-		Reset();
 	}
 
 	AsteroidsActor::Update(dt);
@@ -70,23 +63,25 @@ void Player::MoveTo(const Vec2D& position)
 	m_CollisionBoundary.MoveTo(position);
 }
 
+void Player::AddToScore(uint32_t score)
+{
+	m_Score += score;
+}
+
 void Player::Reset()
 {
 	ResetToFirstAnimation();
-	Vec2D startPosition = Vec2D((float)(App::Singleton().Width() / 2), (float)(App::Singleton().Height() / 2));
-	MoveTo(startPosition);
-	
+	ResetPosition();
 	ResetScore();
-	ResetDirection();
-
-	m_PlayerState = AsteroidsPlayerStates::ALIVE;
+	m_Lives = 3;
 	m_Speed = 0;
 }
 
 void Player::CrashedIntoAsteroid()
 {
 	SetAnimation("explosion", false);
-	m_PlayerState = AsteroidsPlayerStates::DYING;
+	m_IsDying = true;
+	LooseLife();
 }
 
 void Player::ResetScore()
@@ -94,10 +89,13 @@ void Player::ResetScore()
 	m_Score = 0;
 }
 
-void Player::ResetDirection()
+void Player::ResetPosition()
 {
 	m_MovementDirection = Vec2D(0, -1);
 	m_LookingDirection = Vec2D(0, -1);
+	
+	Vec2D startPosition = Vec2D((float)(App::Singleton().Width() / 2), (float)(App::Singleton().Height() / 2));
+	MoveTo(startPosition);
 }
 
 void Player::ResetToFirstAnimation()

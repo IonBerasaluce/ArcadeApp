@@ -221,7 +221,6 @@ void Pacman::Update(uint32_t dt)
 			}
 		}
 	}
-
 }
 
 void Pacman::Draw(Screen& screen)
@@ -344,7 +343,6 @@ void Pacman::ResetGame()
 	m_NumLives = MAX_NUM_LIVES;
 	m_PressedDirection = PACMAN_MOVE_NONE;
 
-	// Initialise the highscore table
 	m_HighScoreTable.Init("Pacman");
 
 	SetUpGhosts();

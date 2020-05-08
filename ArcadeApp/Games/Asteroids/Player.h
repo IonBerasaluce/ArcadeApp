@@ -13,13 +13,6 @@ enum class RotationDirection
 	ROTATE_RIGHT = 1
 };
 
-enum class AsteroidsPlayerStates
-{
-	ALIVE = 0,
-	DEAD,
-	DYING
-};
-
 
 class Player : public AsteroidsActor
 {
@@ -32,21 +25,23 @@ public:
 	void Accelerate(uint32_t dt);
 	void Rotate(RotationDirection rotationDirection);
 	void MoveTo(const Vec2D& position);
+	void AddToScore(uint32_t score);
 	void Reset();
 	void CrashedIntoAsteroid();
+	void ResetToFirstAnimation();
+	void ResetPosition();
 
-	inline void LossLife() { --m_Lives; }
+	inline void LooseLife() { --m_Lives; }
 	inline Circle const GetCollisionBox() const { return m_CollisionBoundary; }
+	inline const int GetLives() const { return m_Lives; }
 
 private:
 	void ResetScore();
-	void ResetDirection();
-	void ResetToFirstAnimation();
 
 private:
 	int m_Lives;
 	int m_Score;
-	AsteroidsPlayerStates m_PlayerState;
+	bool m_IsDying;
 	Circle m_CollisionBoundary;
 	static const float PLAYER_ACCELERATION;
 	static const float MAX_SPEED;

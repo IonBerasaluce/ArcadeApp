@@ -37,6 +37,14 @@ Start Scene
 
 */
 
+enum class AsteroidsGameState
+{
+	LEVEL_STARTING = 0,
+	PLAY_GAME,
+	GAME_OVER,
+	LOSS_LIFE
+};
+
 class AsteroidsGame : public Game
 {
 public:
@@ -52,6 +60,7 @@ public:
 private:
 	void ShootMissile(const Vec2D& position, const Vec2D& direction);
 	void ResetGame();
+	void ResetPlayer();
 	void ResetAsteroids();
 	void UpdateMisiles(uint32_t dt);
 	void UpdateAsteroids(uint32_t dt);
@@ -66,4 +75,6 @@ private:
 	
 	SpriteSheet m_AsteroidsSpriteSheet;
 	std::string m_AnimationsPath;
+	AsteroidsGameState m_GameState;
+	uint32_t m_LevelStartingTimer;
 };
