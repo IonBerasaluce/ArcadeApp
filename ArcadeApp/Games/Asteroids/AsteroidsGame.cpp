@@ -82,13 +82,12 @@ void AsteroidsGame::Init(GameController& controller)
 
 	controller.AddInputActionForKey(backAction);
 
+	m_Font = App::Singleton().GetFont();
 	ResetGame();
-
 }
 
 void AsteroidsGame::Update(uint32_t dt)
 {
-	// Have 3 Game states: In play, In serve and In Game over
 	if (m_GameState == AsteroidsGameState::LEVEL_STARTING)
 	{
 		m_LevelStartingTimer += dt;
@@ -96,6 +95,11 @@ void AsteroidsGame::Update(uint32_t dt)
 		{
 			m_LevelStartingTimer = 0;
 			m_GameState = AsteroidsGameState::PLAY_GAME;
+		}
+
+		if (m_LevelStartingTimer % 1000 == 0)
+		{
+			--m_CountDown;
 		}
 	}
 	else if (m_GameState == AsteroidsGameState::PLAY_GAME)
@@ -126,6 +130,8 @@ void AsteroidsGame::Update(uint32_t dt)
 			else
 			{
 				// Update the high score table
+				m_HighScoreTable.UpdateTable(m_Player.GetScore());
+				m_HighScoreTable.SaveToFile();
 				m_GameState = AsteroidsGameState::GAME_OVER;
 			}
 		}
@@ -197,24 +203,49 @@ void AsteroidsGame::UpdateAsteroids(uint32_t dt)
 	}
 }
 
-
 void AsteroidsGame::Draw(Screen& screen)
 {
-	m_Player.Draw(screen);
-
-	if (m_Misiles.size() > 0)
-	{
-		for (auto& misile : m_Misiles)
-		{
-			misile.Draw(screen);
-		}
-	}
 
 	if (m_Asteroids.size() > 0)
 	{
 		for (auto& asteroid : m_Asteroids)
 		{
 			asteroid.Draw(screen);
+		}
+	}
+
+	if (m_GameState == AsteroidsGameState::PLAY_GAME || m_GameState == AsteroidsGameState::LOSS_LIFE)
+	{
+		m_Player.Draw(screen);
+
+		if (m_Misiles.size() > 0)
+		{
+			for (auto& misile : m_Misiles)
+			{
+				misile.Draw(screen);
+			}
+		}
+	}
+	else
+	{	
+		uint32_t sWidth = App::Singleton().Width();
+		uint32_t sHeight = App::Singleton().Height();
+
+		Vec2D textPos;
+		AARectangle rect = AARectangle(Vec2D(sWidth / 2, sHeight / 2) - Vec2D(3, 3), 6, 6);
+		
+		if (m_GameState == AsteroidsGameState::LEVEL_STARTING)
+		{
+			if (m_CountDown > 0)
+			{
+				textPos = m_Font.GetDrawPosition(std::to_string(m_CountDown), rect, BitmapFontXAlignment::BFXA_CENTRE, BitmapFontYAlignment::BFYA_CENTRE);
+				screen.Draw(m_Font, std::to_string(m_CountDown), textPos, Colour::Red());
+			}
+		}
+		else
+		{
+			textPos = m_Font.GetDrawPosition("Game Over!", rect, BitmapFontXAlignment::BFXA_CENTRE, BitmapFontYAlignment::BFYA_CENTRE);
+			screen.Draw(m_Font, "Game Over!", textPos, Colour::Red());
 		}
 	}
 }
@@ -332,7 +363,10 @@ void AsteroidsGame::ResetGame()
 	m_Accumulator = 0;
 	m_Misiles.clear();
 	ResetAsteroids();
+	m_CountDown = 3;
 	m_GameState = AsteroidsGameState::LEVEL_STARTING;
+
+	m_HighScoreTable.Init("Asteroids");
 }
 
 void AsteroidsGame::ResetPlayer()
@@ -340,7 +374,7 @@ void AsteroidsGame::ResetPlayer()
 	m_Player.ResetPosition();
 	m_Player.ResetToFirstAnimation();
 	ResetAsteroids();
-	
+	m_CountDown = 3;
 	m_GameState = AsteroidsGameState::LEVEL_STARTING;
 }
 

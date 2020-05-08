@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Misile.h"
 #include "Shapes/AARectangle.h"
+#include "App/HighScoreTable.h"
 #include "Asteroid.h"
 #include "App/App.h"
 
@@ -77,4 +78,8 @@ private:
 	std::string m_AnimationsPath;
 	AsteroidsGameState m_GameState;
 	uint32_t m_LevelStartingTimer;
+	uint32_t m_CountDown;
+
+	BitmapFont m_Font;
+	HighScoreTable m_HighScoreTable;
 };

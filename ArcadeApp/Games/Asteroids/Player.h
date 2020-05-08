@@ -3,6 +3,7 @@
 
 #include "Shapes/Triangle.h"
 #include "AsteroidsActor.h"
+#include "App/HighScoreTable.h"
 
 class Screen;
 class AARectangle;
@@ -34,13 +35,14 @@ public:
 	inline void LooseLife() { --m_Lives; }
 	inline Circle const GetCollisionBox() const { return m_CollisionBoundary; }
 	inline const int GetLives() const { return m_Lives; }
+	inline const ScoreInformation GetScore() { return m_Score; }
 
 private:
 	void ResetScore();
 
 private:
 	int m_Lives;
-	int m_Score;
+	ScoreInformation m_Score;
 	bool m_IsDying;
 	Circle m_CollisionBoundary;
 	static const float PLAYER_ACCELERATION;

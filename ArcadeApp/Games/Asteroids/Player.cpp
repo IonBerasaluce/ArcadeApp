@@ -8,7 +8,7 @@
 const float Player::PLAYER_ACCELERATION = 0.005f;
 const float Player::MAX_SPEED = 0.05f;
 
-Player::Player(): m_Lives(3), m_Score(0), m_IsDying(false)
+Player::Player(): m_Lives(3), m_IsDying(false)
 {
 }
 
@@ -17,6 +17,7 @@ void Player::Init(const SpriteSheet& spriteSheet, const std::string& animationsP
 	Vec2D startPosition = Vec2D((float)(App::Singleton().Width() / 2), (float)(App::Singleton().Height() / 2));
 	AsteroidsActor::Init(spriteSheet, animationsPath, startPosition, 0.0f, spriteColour);
 	m_CollisionBoundary = Circle(Vec2D::Zero, m_Sprite.GetBoundingBox().GetHeight() / 2);
+	m_Score.PlayerName = "ABC";
 	Reset();
 }
 
@@ -65,7 +66,7 @@ void Player::MoveTo(const Vec2D& position)
 
 void Player::AddToScore(uint32_t score)
 {
-	m_Score += score;
+	m_Score.score += score;
 }
 
 void Player::Reset()
@@ -86,7 +87,7 @@ void Player::CrashedIntoAsteroid()
 
 void Player::ResetScore()
 {
-	m_Score = 0;
+	m_Score.score = 0;
 }
 
 void Player::ResetPosition()
