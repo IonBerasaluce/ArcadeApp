@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <time.h>
 
 #include "AsteroidsGame.h"
 #include "Graphics/Screen.h"
@@ -6,7 +7,6 @@
 #include "App/App.h"
 
 #include "Inputs/GameController.h"
-
 
 void AsteroidsGame::Init(GameController& controller)
 {
@@ -70,6 +70,17 @@ void AsteroidsGame::Init(GameController& controller)
 void AsteroidsGame::Update(uint32_t dt)
 {
 	CalculateCollisions(m_Player);
+
+	// Generate new asteroids as time passes
+	m_Accumulator += dt;
+	if (m_Accumulator >= 1000)
+	{
+		if (m_Asteroids.size() < 15)
+		{
+			GenerateAsteroids(1);
+			m_Accumulator = 0;
+		}
+	}
 	
 	m_Player.Update(dt, m_MapBoundary);
 
@@ -92,14 +103,12 @@ void AsteroidsGame::Update(uint32_t dt)
 
 	size_t size = m_Asteroids.size();
 
-	Vec2D randomDirection;
-
 	for (size_t i = 0; i < size; i++)
 	{
 		if (m_Asteroids[i].IsDestroyed() && m_Asteroids[i].GetSize() > 0 && m_Asteroids[i].Reproduce())
 		{
 			Asteroid currentAsteroid = m_Asteroids[i];
-			GenerateAsteroids(2, static_cast<AsteroidSize>(currentAsteroid.GetSize() - 1), currentAsteroid.Position());
+			GenerateAsteroids(2, currentAsteroid.Position(), static_cast<AsteroidSize>(currentAsteroid.GetSize() - 1));
 		}
 	}
 	
@@ -121,7 +130,7 @@ void AsteroidsGame::Update(uint32_t dt)
 	}
 	else
 	{
-		//GenerateAsteroids(m_NumAsteroids + 1, AsteroidSize::EXTRALARGE);
+		GenerateAsteroids(3);
 	}
 
 }
@@ -174,32 +183,68 @@ void AsteroidsGame::CalculateCollisions(Player& player)
 	}
 }
 
-void AsteroidsGame::GenerateAsteroids(const int n, const Vec2D& position)
+void AsteroidsGame::GenerateAsteroids(const int n, const Vec2D& position, AsteroidSize size)
 {
+	uint32_t sWidth = App::Singleton().Width();
+	uint32_t sHeight = App::Singleton().Height();
+	float x, y;
 	Vec2D newPosition;
-	Vec2D randomDir;
+	int newSize;
+	srand(time(NULL));
 
+	int corridor = 40;
+
+	// This should generate both the split asteroids and the new asteroids in the surrounding map
 	for (size_t i = 0; i < n; i++)
 	{
+		if (size == AsteroidSize::EXTRALARGE)
+		{
+			++m_NumAsteroids;
+		}
+
 		if (position == Vec2D::Zero)
 		{
-			newPosition = Vec2D((float)(rand() % App::Singleton().Width()), (float)(rand() % App::Singleton().Height()));
+			// We are placing the asteroid in the surronding area of the map (i.e not in the center nor where the player is)
+			float y = (float)(rand() % sHeight);
+			x = 0.0f;
+			
+			if (y > corridor || y < sHeight - corridor)
+			{
+				if ((rand() % 2) == 1)
+				{
+					x = (float)(rand() % corridor);
+				}
+				else
+				{
+					x = (float)(sWidth - (rand() % corridor));
+				}
+			}
+			else
+			{
+				x = (float)(rand() % sWidth);
+			}
+
+			newPosition = Vec2D(x, y);
 		}
 		else
 		{
 			newPosition = position;
 		}
 
-		randomDir = Vec2D((float)rand(), (float)rand());
+		if (size == AsteroidSize::NONE)
+		{
+			// We choose a random size 
+			newSize = rand() % 4;
+		}
+		else 
+		{
+			newSize = static_cast<int>(size);
+		}
+		
+		Vec2D randomDir((float)(rand() % 10), (float)(rand() % 10));
 
 		Asteroid asteroid;
-		asteroid.Init(m_AsteroidsSpriteSheet, randomDir.GetUnitVec(), newPosition, size);
-
-		if (size == AsteroidSize::EXTRALARGE)
-		{
-			++m_NumAsteroids;
-		}
-
+		asteroid.Init(m_AsteroidsSpriteSheet, randomDir.GetUnitVec(), newPosition, static_cast<AsteroidSize>(newSize));
 		m_Asteroids.push_back(asteroid);
 	}
 }
@@ -218,15 +263,12 @@ void AsteroidsGame::ShootMissile(const Vec2D& position, const Vec2D& direction)
 
 void AsteroidsGame::ResetGame()
 {
-	// When creating the boundary we make it slightly bigger than the screen to improve the wrap effect
-	//m_MapBoundary = { Vec2D(-10.0f, -10.0f), Vec2D((float)(App::Singleton().Width() + 10), (float)(App::Singleton().Height() + 10)) };
 	m_MapBoundary = { Vec2D::Zero, Vec2D((float)(App::Singleton().Width()), (float)(App::Singleton().Height())) };
-
 	m_Player.Reset();
-	
 	m_Asteroids.clear();
 	m_Misiles.clear();
-	GenerateAsteroids(1, AsteroidSize::EXTRALARGE);
+	m_Accumulator = 0;
+	GenerateAsteroids(3);
 }
 
 const std::string& AsteroidsGame::GetName() const

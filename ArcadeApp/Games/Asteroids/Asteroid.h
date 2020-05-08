@@ -6,12 +6,13 @@
 class Screen;
 class AARectangle;
 
-enum class AsteroidSize
+enum AsteroidSize
 {
 	SMALL = 0,
 	MEDIUM,
 	LARGE,
-	EXTRALARGE
+	EXTRALARGE,
+	NONE
 };
 
 class Asteroid
