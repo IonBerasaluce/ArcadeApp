@@ -17,6 +17,7 @@ class AsteroidsActor : public Actor
 {
 public:
 
+	AsteroidsActor();
 	virtual ~AsteroidsActor() {}
 	virtual void Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Vec2D& initialPos, float movementSpeed, const Colour& spriteColour = Colour::White());
 	virtual void Update(uint32_t dt) override;

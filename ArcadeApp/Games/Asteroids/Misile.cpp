@@ -5,7 +5,7 @@ namespace
 {
 	uint32_t MISILE_WIDTH = 10;
 	uint32_t MISILE_HEIGHT = 10;
-	float MISILE_SPEED = 0.1;
+	float MISILE_SPEED = 0.1f;
 }
 
 Misile::Misile() :m_Hit(false)

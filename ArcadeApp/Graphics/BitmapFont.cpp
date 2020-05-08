@@ -49,33 +49,33 @@ Vec2D BitmapFont::GetDrawPosition(const std::string& str, const AARectangle& box
 
 	if (xAlign == BitmapFontXAlignment::BFXA_CENTRE)
 	{
-		x = box.GetWidth() / 2 - textSize.width / 2;
+		x = (uint32_t)(box.GetWidth() / 2 - textSize.width / 2);
 	}
 	else if (xAlign == BitmapFontXAlignment::BFXA_RIGHT)
 	{
-		x = box.GetWidth() - textSize.width;
+		x = (uint32_t) (box.GetWidth() - textSize.width);
 	}
 	else
 	{
-		x += box.GetTopLeft().GetX();
+		x += (uint32_t)box.GetTopLeft().GetX();
 	}
 
-	x += box.GetTopLeft().GetX();
+	x += (uint32_t)box.GetTopLeft().GetX();
 
 	if (yAlign == BitmapFontYAlignment::BFYA_CENTRE)
 	{
-		y = (box.GetHeight() / 2 - textSize.height / 2);
+		y = (uint32_t)(box.GetHeight() / 2 - textSize.height / 2);
 	}
 	else if (yAlign == BitmapFontYAlignment::BFYA_BOTTOM)
 	{
-		y = box.GetHeight() - textSize.height;
+		y = (uint32_t)(box.GetHeight() - textSize.height);
 	}
 	else
 	{
-		y += box.GetTopLeft().GetY();
+		y += (uint32_t)box.GetTopLeft().GetY();
 	}
 
-	y += box.GetTopLeft().GetY();
+	y += (uint32_t)box.GetTopLeft().GetY();
 
-	return Vec2D(x, y);
+	return Vec2D((float)x, (float)y);
 }

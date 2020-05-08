@@ -30,8 +30,9 @@ public:
 
 	inline const AARectangle GetBoundingBox() const { return m_Sprite.GetBoundingBox(); }
 
+
 protected:
-	void SetAnimation(const std::string& animationName, bool looped);
+	virtual void SetAnimation(const std::string& animationName, bool looped);
 
 	AnimatedSprite m_Sprite;
 

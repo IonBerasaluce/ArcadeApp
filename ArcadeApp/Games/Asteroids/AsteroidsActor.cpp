@@ -2,6 +2,10 @@
 #include "Graphics/Screen.h"
 #include "Shapes/Line2D.h"
 
+AsteroidsActor::AsteroidsActor():m_Speed(0.0f), m_RotationAngle(0.0f)
+{
+}
+
 void AsteroidsActor::Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Vec2D& initialPos, float movementSpeed, const Colour& spriteColour)
 {
 	Actor::Init(spriteSheet, animationsPath, initialPos, spriteColour);

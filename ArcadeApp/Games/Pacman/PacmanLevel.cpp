@@ -93,7 +93,7 @@ void PacmanLevel::Update(uint32_t dt, PacmanPlayer& pacman, std::vector<Ghost>& 
 	{
 		if (t.isTeleportTile)
 		{
-			AARectangle teleportTileAABB(t.position, t.width, static_cast<float>(m_TileHeight));
+			AARectangle teleportTileAABB(t.position, t.width, static_cast<unsigned int>(m_TileHeight));
 
 			Tile* teleportToTile = GetTileForSymbol(t.teleportToSymbol);
 			assert(teleportToTile);
@@ -279,10 +279,10 @@ void PacmanLevel::ResetPellets()
 	const uint32_t PELLET_SIZE = 2; 
 	const uint32_t PADDING = static_cast<uint32_t>(m_TileHeight);
 
-	uint32_t startingY = m_LayoutOffset.GetY() + PADDING + m_TileHeight - 1;
+	uint32_t startingY = (uint32_t)m_LayoutOffset.GetY() + PADDING + m_TileHeight - 1;
 	uint32_t startingX = PADDING + 3;
 
-	const uint32_t LEVEL_HEIGHT = m_LayoutOffset.GetY() + 32 * m_TileHeight;
+	const uint32_t LEVEL_HEIGHT = (uint32_t)m_LayoutOffset.GetY() + 32 * m_TileHeight;
 	
 	Pellet p; 
 	p.score = 10;
@@ -300,7 +300,7 @@ void PacmanLevel::ResetPellets()
 				{
 					p.powerPellet = 1;
 					p.score = 0;
-					p.m_BBox = AARectangle(Vec2D(x - 3, y - 3), m_TileHeight, m_TileHeight);
+					p.m_BBox = AARectangle(Vec2D((float)x - 3.0f, (float)y - 3.0f), m_TileHeight, m_TileHeight);
 					m_Pellets.push_back(p);
 
 					p.powerPellet = 0;
@@ -311,7 +311,7 @@ void PacmanLevel::ResetPellets()
 			}
 
 			// Make a pellet
-			AARectangle rect = AARectangle(Vec2D(x, y), PELLET_SIZE, PELLET_SIZE);
+			AARectangle rect = AARectangle(Vec2D((float)x, (float)y), PELLET_SIZE, PELLET_SIZE);
 
 			bool found = false;
 
@@ -580,7 +580,7 @@ bool PacmanLevel::LoadLevel(const std::string& levelPath)
 	layoutCommand.commandType = COMMAND_MULTI_LINE;
 	layoutCommand.parseFunc = [&layoutOffset, this](ParseFunctionParams params)
 	{
-		int startingX = layoutOffset.GetX();
+		int startingX = (int)layoutOffset.GetX();
 		
 		// this does the lines
 		for (int c = 0; c < params.line.length(); c++)
@@ -589,18 +589,18 @@ bool PacmanLevel::LoadLevel(const std::string& levelPath)
 
 			if (tile)
 			{
-				tile->position = Vec2D(startingX, layoutOffset.GetY());
+				tile->position = Vec2D((float)startingX, layoutOffset.GetY());
 
 				if (tile->isGate > 0)
 				{
 					Excluder gate;
-					gate.Init(AARectangle(Vec2D(startingX, layoutOffset.GetY()), tile->width, static_cast<unsigned int>(m_TileHeight)));
+					gate.Init(AARectangle(Vec2D((float)startingX, layoutOffset.GetY()), tile->width, static_cast<unsigned int>(m_TileHeight)));
 					m_Gate.push_back(gate);
 				}
 				else if (tile->collidable > 0)
 				{
 					Excluder wall;
-					wall.Init(AARectangle(Vec2D(startingX, layoutOffset.GetY()), tile->width, static_cast<unsigned int>(m_TileHeight)));
+					wall.Init(AARectangle(Vec2D((float)startingX, layoutOffset.GetY()), tile->width, static_cast<unsigned int>(m_TileHeight)));
 
 					m_Walls.push_back(wall);
 				}
@@ -640,7 +640,7 @@ bool PacmanLevel::LoadLevel(const std::string& levelPath)
 		}
 
 		// Once we are done with the line we offset the column
-		layoutOffset += Vec2D(0, m_TileHeight);
+		layoutOffset += Vec2D(0, (float)m_TileHeight);
 	};
 
 	fileLoader.AddCommand(layoutCommand);

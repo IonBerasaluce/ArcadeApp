@@ -90,7 +90,7 @@ void AsteroidsGame::Update(uint32_t dt)
 		m_Misiles.erase(i);
 	}
 
-	int size = m_Asteroids.size();
+	size_t size = m_Asteroids.size();
 
 	Vec2D randomDirection;
 
@@ -159,8 +159,8 @@ void AsteroidsGame::CalculateCollisions(Player& player)
 		float distance = m_Asteroids[i].Position().Distance(m_Player.Position());
 		if (distance < m_Asteroids[i].GetRadious())
 		{
+			m_Player.SetAnimation("explosion", false);
 			m_Player.LossLife();
-			// TODO: Clean up here
 			m_Player.Reset();
 		}
 
@@ -189,14 +189,14 @@ void AsteroidsGame::GenerateAsteroids(const int n, AsteroidSize size, const Vec2
 	{
 		if (position == Vec2D::Zero)
 		{
-			newPosition = Vec2D(rand() % App::Singleton().Width(), rand() % App::Singleton().Height());
+			newPosition = Vec2D((float)(rand() % App::Singleton().Width()), (float)(rand() % App::Singleton().Height()));
 		}
 		else
 		{
 			newPosition = position;
 		}
 
-		randomDir = Vec2D(rand(), rand());
+		randomDir = Vec2D((float)rand(), (float)rand());
 
 		Asteroid asteroid;
 		asteroid.Init(m_AsteroidsSpriteSheet, randomDir.GetUnitVec(), newPosition, size);
@@ -225,7 +225,7 @@ void AsteroidsGame::ShootMissile(const Vec2D& position, const Vec2D& direction)
 void AsteroidsGame::ResetGame()
 {
 	// When creating the boundary we make it slightly bigger than the screen to improve the wrap effect
-	m_MapBoundary = { Vec2D(-10, -10), Vec2D(App::Singleton().Width() + 10, App::Singleton().Height() + 10) };
+	m_MapBoundary = { Vec2D(-10.0f, -10.0f), Vec2D((float)(App::Singleton().Width() + 10), (float)(App::Singleton().Height() + 10)) };
 
 	m_Player.Reset();
 	

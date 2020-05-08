@@ -70,7 +70,7 @@ void Pacman::Init(GameController& controller)
 
 	m_Level.Init(App::Singleton().GetBasePath() + "Assets\\Pacman_level.txt", &m_PacmanSpriteSheet);
 
-	m_StringRect = AARectangle(Vec2D(0, m_Level.GetInGameTextYPos()), App::Singleton().Width(), m_Pacman.GetBoundingBox().GetHeight());
+	m_StringRect = AARectangle(Vec2D(0, (float)m_Level.GetInGameTextYPos()), (unsigned int)App::Singleton().Width(), (unsigned int)m_Pacman.GetBoundingBox().GetHeight());
 
 
 	ResetGame();
@@ -240,7 +240,7 @@ void Pacman::Draw(Screen& screen)
 	//Draw the score
 	{
 		Vec2D levelOffset = m_Level.GetLayoutOffset();
-		AARectangle highScoreRect = AARectangle(Vec2D(0, 4), App::Singleton().Width(), levelOffset.GetY());
+		AARectangle highScoreRect = AARectangle(Vec2D(0, 4), (unsigned int)App::Singleton().Width(), (unsigned int)levelOffset.GetY());
 		
 		std::string scoreString = std::to_string(m_Pacman.Score());
 
@@ -280,17 +280,17 @@ void Pacman::DrawLives(Screen& screen)
 
 	for (int i = 0; i < m_NumLives; i++)
 	{
-		screen.Draw(m_PacmanSpriteSheet, PACMAN_LIFE_SPRITE_NAME, Vec2D(xPos, App::Singleton().Height() - sprite.height));
+		screen.Draw(m_PacmanSpriteSheet, PACMAN_LIFE_SPRITE_NAME, Vec2D((float)xPos, (float)(App::Singleton().Height() - sprite.height)));
 		xPos += X_PAD + sprite.width;
 	}
 }
 
 void Pacman::SetUpGhosts()
 {
-	const Vec2D BLINKY_SCATTER_POS = Vec2D(App::Singleton().Width() - 24, 0);
-	const Vec2D INKY_SCATTER_POS = Vec2D(App::Singleton().Width(), App::Singleton().Height());
-	const Vec2D PINKY_SCATTER_POS = Vec2D(24, 0);
-	const Vec2D CLYDE_SCATTER_POS = Vec2D(0, App::Singleton().Height());
+	const Vec2D BLINKY_SCATTER_POS = Vec2D((float)(App::Singleton().Width() - 24), 0);
+	const Vec2D INKY_SCATTER_POS = Vec2D((float)(App::Singleton().Width()), (float)(App::Singleton().Height()));
+	const Vec2D PINKY_SCATTER_POS = Vec2D(24.0f, 0.0f);
+	const Vec2D CLYDE_SCATTER_POS = Vec2D(0.0f, (float)(App::Singleton().Height()));
 
 	std::string path = App::Singleton().GetBasePath() + "Assets\\Ghost_animations.txt";
 
@@ -303,7 +303,7 @@ void Pacman::SetUpGhosts()
 	m_Ghosts[BLINKY] = blinky;
 
 	auto blinkyAI = GhostAI();
-	blinkyAI.Init(m_Ghosts[BLINKY], blinky.GetBoundingBox().GetWidth(), BLINKY_SCATTER_POS, m_Level.GhostSpawnPoints()[PINKY], m_Level.GhostSpawnPoints()[BLINKY], BLINKY);
+	blinkyAI.Init(m_Ghosts[BLINKY], (uint32_t)blinky.GetBoundingBox().GetWidth(), BLINKY_SCATTER_POS, m_Level.GhostSpawnPoints()[PINKY], m_Level.GhostSpawnPoints()[BLINKY], BLINKY);
 	m_GhostAI[BLINKY] = blinkyAI;
 
 	Ghost pinky;
@@ -312,7 +312,7 @@ void Pacman::SetUpGhosts()
 	m_Ghosts[PINKY] = pinky;
 
 	auto pinkyAI = GhostAI();
-	pinkyAI.Init(m_Ghosts[PINKY], pinky.GetBoundingBox().GetWidth(), PINKY_SCATTER_POS, m_Level.GhostSpawnPoints()[PINKY], m_Level.GhostSpawnPoints()[BLINKY], PINKY);
+	pinkyAI.Init(m_Ghosts[PINKY], (uint32_t)pinky.GetBoundingBox().GetWidth(), PINKY_SCATTER_POS, m_Level.GhostSpawnPoints()[PINKY], m_Level.GhostSpawnPoints()[BLINKY], PINKY);
 	m_GhostAI[PINKY] = pinkyAI;
 
 	Ghost inky;
@@ -321,7 +321,7 @@ void Pacman::SetUpGhosts()
 	m_Ghosts[INKY] = inky;
 
 	auto inkyAI = GhostAI();
-	inkyAI.Init(m_Ghosts[INKY], inky.GetBoundingBox().GetWidth(), INKY_SCATTER_POS, m_Level.GhostSpawnPoints()[PINKY], m_Level.GhostSpawnPoints()[BLINKY], INKY);
+	inkyAI.Init(m_Ghosts[INKY], (uint32_t)inky.GetBoundingBox().GetWidth(), INKY_SCATTER_POS, m_Level.GhostSpawnPoints()[PINKY], m_Level.GhostSpawnPoints()[BLINKY], INKY);
 	m_GhostAI[INKY] = inkyAI;
 
 	Ghost clyde;
@@ -330,7 +330,7 @@ void Pacman::SetUpGhosts()
 	m_Ghosts[CLYDE] = clyde;
 	
 	auto clydeAI = GhostAI();
-	clydeAI.Init(m_Ghosts[CLYDE], clyde.GetBoundingBox().GetWidth(), CLYDE_SCATTER_POS, m_Level.GhostSpawnPoints()[PINKY], m_Level.GhostSpawnPoints()[BLINKY], CLYDE);
+	clydeAI.Init(m_Ghosts[CLYDE], (uint32_t)clyde.GetBoundingBox().GetWidth(), CLYDE_SCATTER_POS, m_Level.GhostSpawnPoints()[PINKY], m_Level.GhostSpawnPoints()[BLINKY], CLYDE);
 	m_GhostAI[CLYDE] = clydeAI;
 
 	for (size_t i = 0; i < GhostName::NUM_GHOSTS; i++)

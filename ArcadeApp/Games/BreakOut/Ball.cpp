@@ -12,7 +12,7 @@ Ball::Ball():Ball(Vec2D::Zero, RADIUS)
 }
 
 Ball::Ball(const Vec2D& pos, float radius):
-	m_BBox(pos - Vec2D(radius, radius), radius*2.0f, radius * 2.0f), m_Velocity(Vec2D::Zero)
+	m_BBox(pos - Vec2D(radius, radius), (uint32_t)(radius*2.0f), (uint32_t)(radius * 2.0f)), m_Velocity(Vec2D::Zero)
 {
 
 }

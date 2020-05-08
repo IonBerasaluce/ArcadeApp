@@ -159,7 +159,7 @@ void Screen::Draw(const Vec2D& vec, const Colour& colour)
 	assert(ptrWindow);
 	if (ptrWindow)
 	{
-		m_BackBuffer.SetPixel(colour, vec.GetX(), vec.GetY());
+		m_BackBuffer.SetPixel(colour, (int)vec.GetX(), (int)vec.GetY());
 	}
 
 }
@@ -171,10 +171,10 @@ void Screen::Draw(const Line2D& line, const Colour& colour)
 	{
 		int dx, dy;
 
-		int x0 = roundf(line.GetP0().GetX());
-		int y0 = roundf(line.GetP0().GetY());
-		int x1 = roundf(line.GetP1().GetX());
-		int y1 = roundf(line.GetP1().GetY());
+		int x0 = (int)(roundf(line.GetP0().GetX()));
+		int y0 = (int)(roundf(line.GetP0().GetY()));
+		int x1 = (int)(roundf(line.GetP1().GetX()));
+		int y1 = (int)(roundf(line.GetP1().GetY()));
 
 		dx = x1 - x0;
 		dy = y1 - y0;
@@ -320,9 +320,9 @@ void Screen::Draw(const BMPImage& image, const Sprite& sprite, const Vec2D& pos,
 
 	// This is the position of where we will place the sprite on the screen
 	Vec2D topLeft = pos;
-	Vec2D topRight = pos + Vec2D(width, 0);
-	Vec2D bottomLeft = pos + Vec2D(0, height);
-	Vec2D bottomRight = pos + Vec2D(width, height);
+	Vec2D topRight = pos + Vec2D((float)width, 0);
+	Vec2D bottomLeft = pos + Vec2D(0, (float)height);
+	Vec2D bottomRight = pos + Vec2D((float)width, (float)height);
 
 	std::vector<Vec2D> points = { topLeft, bottomLeft, bottomRight, topRight };
 
@@ -348,7 +348,7 @@ void Screen::Draw(const BMPImage& image, const Sprite& sprite, const Vec2D& pos,
 			float tx = roundf(u * static_cast<float>(sprite.width));
 			float ty = roundf(v * static_cast<float>(sprite.height));
 
-			Colour c = pixels[GetIndex(image.GetWidth(), ty + sprite.yPos, tx + sprite.xPos)];
+			Colour c = pixels[GetIndex(image.GetWidth(), (unsigned int)(ty + sprite.yPos), (unsigned int)(tx + sprite.xPos))];
 
 			Colour nc = { static_cast<uint8_t>(c.GetRed() * rVal), static_cast<uint8_t>(c.GetGreen() * gVal), static_cast<uint8_t>(c.GetBlue() * bVal), static_cast<uint8_t>(c.GetAlpha() * aVal) };
 
@@ -363,7 +363,7 @@ void Screen::Draw(const SpriteSheet& ss, const std::string& spriteName, const Ve
 
 void Screen::Draw(const BitmapFont& font, const std::string& textLine, const Vec2D& position, const Colour& overlayColour)
 {
-	uint32_t xPos = position.GetX();
+	uint32_t xPos = (uint32_t)position.GetX();
 	const SpriteSheet& ss = font.GetSpriteSheet();
 
 	for (char c : textLine) 
@@ -376,7 +376,7 @@ void Screen::Draw(const BitmapFont& font, const std::string& textLine, const Vec
 
 		Sprite sprite = ss.GetSprite(std::string("") + c);
 
-		Draw(ss.GetBMPImage(), sprite, Vec2D(xPos, position.GetY()), overlayColour);
+		Draw(ss.GetBMPImage(), sprite, Vec2D((float)xPos, (float)position.GetY()), overlayColour);
 
 		xPos += sprite.width;
 
@@ -438,7 +438,7 @@ void Screen::FillPoly(const std::vector<Vec2D>& points, FillPolyFunc func, float
 		float sine = sinf(angle);
 
 		// Scan line fill poly algorithm
-		for (int pixelY = top; pixelY < bottom; ++pixelY)
+		for (int pixelY = (int)top; pixelY < (int)bottom; ++pixelY)
 		{
 			// These are the x-intercepts
 			std::vector<float> nodeXVec;
@@ -480,11 +480,11 @@ void Screen::FillPoly(const std::vector<Vec2D>& points, FillPolyFunc func, float
 						nodeXVec[k + 1] = right;
 					}
 					
-					for (int pixelX = nodeXVec[k]; pixelX < nodeXVec[k + 1]; ++pixelX)
+					for (int pixelX = (int)nodeXVec[k]; pixelX < nodeXVec[k + 1]; ++pixelX)
 					{
 						// Here the first 2 arguments have to be the rotated pixel locations and func(pixelX, pixelY) has to receive the non-rotated pixels
 						// Update the position of the pixelX and Pixel Y based on the rotated pixel
-						Vec2D rotatedPixel = Vec2D(pixelX, pixelY);
+						Vec2D rotatedPixel = Vec2D((float)pixelX, (float)pixelY);
 						rotatedPixel.Rotate(angle, centerPoint);
 						Draw((int)rotatedPixel.GetX(), (int)rotatedPixel.GetY(), func(pixelX, pixelY));
 					}

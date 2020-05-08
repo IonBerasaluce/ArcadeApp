@@ -112,7 +112,7 @@ void HighScoreTable::CreateDefaultTable()
     {
         ScoreInformation scoreInfo;
         scoreInfo.PlayerName = "ZZZ";
-        scoreInfo.score = 0.0f;
+        scoreInfo.score = 0;
         m_Table.push_back(scoreInfo);
     }
 }

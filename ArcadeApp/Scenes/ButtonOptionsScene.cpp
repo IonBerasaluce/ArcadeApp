@@ -89,7 +89,7 @@ void ButtonOptionsScene::Init()
 	
 	for (auto& button : m_Buttons)
 	{
-		button.Init(Vec2D(width / 2 - maxButtonWidth / 2, yOffset), maxButtonWidth, buttonHeight);
+		button.Init(Vec2D((float)(width / 2 - maxButtonWidth / 2), (float)yOffset), maxButtonWidth, buttonHeight);
 
 		yOffset += buttonHeight + Y_PAD;
 	}

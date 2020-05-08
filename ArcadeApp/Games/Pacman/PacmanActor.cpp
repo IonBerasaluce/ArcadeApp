@@ -15,7 +15,7 @@ void PacmanActor::Update(uint32_t dt)
 	{
 		Vec2D delta = Vec2D::Zero;
 
-		delta = GetMovementVector(m_MovementDirection) * m_MovementSpeed;
+		delta = GetMovementVector(m_MovementDirection) * (float)m_MovementSpeed;
 
 		m_Delta += delta * MillisecondsToSeconds(dt);
 		
@@ -24,13 +24,13 @@ void PacmanActor::Update(uint32_t dt)
 			int dx = int(fabs(m_Delta.GetX()));
 			if (m_Delta.GetX() < 0)
 			{
-				m_Sprite.MoveBy(Vec2D(-dx, 0));
-				m_Delta.SetX(m_Delta.GetX() + dx);
+				m_Sprite.MoveBy(Vec2D((float)(-dx), 0.0f));
+				m_Delta.SetX(m_Delta.GetX() + (float)dx);
 			}
 			else
 			{
-				m_Sprite.MoveBy(Vec2D(dx, 0));
-				m_Delta.SetX(m_Delta.GetX() - dx);
+				m_Sprite.MoveBy(Vec2D((float)dx, 0));
+				m_Delta.SetX(m_Delta.GetX() - (float)dx);
 			}
 		}
 		else if (fabsf(m_Delta.GetY()) >= 1)
@@ -39,13 +39,13 @@ void PacmanActor::Update(uint32_t dt)
 
 			if (m_Delta.GetY() < 0)
 			{
-				m_Sprite.MoveBy(Vec2D(0, -dy));
-				m_Delta.SetY(m_Delta.GetY() + dy);
+				m_Sprite.MoveBy(Vec2D(0.0f, (float)(-dy)));
+				m_Delta.SetY(m_Delta.GetY() + (float)dy);
 			}
 			else
 			{
-				m_Sprite.MoveBy(Vec2D(0, dy));
-				m_Delta.SetY(m_Delta.GetY() - dy);
+				m_Sprite.MoveBy(Vec2D(0.0f, (float)dy));
+				m_Delta.SetY(m_Delta.GetY() - (float)dy);
 			}
 		}
 		m_Sprite.Update(dt);

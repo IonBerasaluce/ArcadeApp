@@ -120,9 +120,9 @@ Colour Colour::EvaluateMinuSourceAlpha(const Colour& source, const Colour& desti
 
 	Colour outColour;
 	outColour.setAlpha(255);
-	outColour.setRed(float(source.GetRed()) * sourceAlpha + destination.GetRed() * destAlpha);
-	outColour.setGreen(float(source.GetGreen()) * sourceAlpha + destination.GetGreen() * destAlpha);
-	outColour.setBlue(float(source.GetBlue()) * sourceAlpha + destination.GetBlue() * destAlpha);
+	outColour.setRed((uint8_t)(float(source.GetRed()) * sourceAlpha + destination.GetRed() * destAlpha));
+	outColour.setGreen((uint8_t)(float(source.GetGreen()) * sourceAlpha + destination.GetGreen() * destAlpha));
+	outColour.setBlue((uint8_t)(float(source.GetBlue()) * sourceAlpha + destination.GetBlue() * destAlpha));
 
 	return outColour;
 }

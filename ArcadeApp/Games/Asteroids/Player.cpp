@@ -4,7 +4,7 @@
 #include "App/App.h"
 
 const float Player::PLAYER_ACCELERATION = 0.005f;
-const float Player::MAX_SPEED = 0.1;
+const float Player::MAX_SPEED = 0.1f;
 
 Player::Player(): m_Lives(3), m_Score(0)
 {
@@ -12,7 +12,7 @@ Player::Player(): m_Lives(3), m_Score(0)
 
 void Player::Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Colour& spriteColour)
 {
-	Vec2D startPosition = Vec2D(App::Singleton().Width() / 2, App::Singleton().Height() / 2);
+	Vec2D startPosition = Vec2D((float)(App::Singleton().Width() / 2), (float)(App::Singleton().Height() / 2));
 	AsteroidsActor::Init(spriteSheet, animationsPath, startPosition, 0.0f, spriteColour);
 	m_CollisionBoundary = Circle(Vec2D::Zero, m_Sprite.GetBoundingBox().GetHeight() / 2);
 	Reset();
@@ -25,13 +25,18 @@ void Player::Update(uint32_t dt, const AARectangle& boundary)
 	m_CollisionBoundary.MoveTo(m_Sprite.GetBoundingBox().GetCenterPoint());
 }
 
+void Player::SetAnimation(const std::string& animationName, bool looped)
+{
+	Actor::SetAnimation(animationName, looped);
+}
+
 void Player::Accelerate(uint32_t dt)
 {
-	SetAnimation("thrusters", false);
+	//SetAnimation("thrusters", false);
 
 	Vec2D currentVelocity = m_MovementDirection * m_Speed;
 
-	Vec2D acceleration = m_LookingDirection * PLAYER_ACCELERATION * dt;
+	Vec2D acceleration = m_LookingDirection * PLAYER_ACCELERATION * (float)dt;
 	Vec2D finalVelocity = currentVelocity + acceleration;
 
 	m_Speed = finalVelocity.Mag();
@@ -57,13 +62,19 @@ void Player::MoveTo(const Vec2D& position)
 
 void Player::Reset()
 {
-	Vec2D startPosition = Vec2D(App::Singleton().Width() / 2, App::Singleton().Height() / 2);
+	Vec2D startPosition = Vec2D((float)(App::Singleton().Width() / 2), (float)(App::Singleton().Height() / 2));
 	MoveTo(startPosition);
 	
 	ResetScore();
 	ResetDirection();
 
 	m_Speed = 0;
+}
+
+void Player::Draw(Screen& screen)
+{
+	AsteroidsActor::Draw(screen);
+	screen.Draw(m_CollisionBoundary, Colour::Red());
 }
 
 void Player::ResetScore()

@@ -21,13 +21,16 @@ public:
 	Player();
 	virtual void Init(const SpriteSheet& spriteSheet, const std::string& animationsPath, const Colour& spriteColour = Colour::White());
 	virtual void Update(uint32_t dt, const AARectangle& boundary);
-	
+	virtual void SetAnimation(const std::string& animationName, bool looped) override;
+
 	void Accelerate(uint32_t dt);
 	void Rotate(RotationDirection rotationDirection);
 	void MoveTo(const Vec2D& position);
 	void Reset();
+	virtual void Draw(Screen& screen) override;
 
 	inline void LossLife() { --m_Lives; }
+	
 
 private:
 	void ResetScore();

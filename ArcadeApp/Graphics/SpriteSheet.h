@@ -15,7 +15,7 @@ struct Sprite
 
 	Vec2D Offset()
 	{
-		AARectangle rect = AARectangle(Vec2D(xPos, yPos), width, height);
+		AARectangle rect = AARectangle(Vec2D((float)xPos, (float)yPos), width, height);
 		Vec2D offset = rect.GetTopLeft() - rect.GetCenterPoint();
 		return offset;
 	}

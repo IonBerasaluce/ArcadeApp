@@ -16,7 +16,7 @@ void Asteroid::Init(const SpriteSheet& spriteSheet, const Vec2D& direction, cons
 	m_MovementDirection = direction;
 
 	m_Sprite = spriteSheet.GetSprite(GetSpriteName());
-	m_CollisionBoundary = Circle(position + m_Sprite.Offset(), m_Sprite.width / 2);
+	m_CollisionBoundary = Circle(position + m_Sprite.Offset(), (float)(m_Sprite.width / 2));
 }
 
 void Asteroid::Draw(Screen& screen)
@@ -27,7 +27,7 @@ void Asteroid::Draw(Screen& screen)
 
 void Asteroid::Update(uint32_t dt, const AARectangle& boundary)
 {
-	m_CollisionBoundary.MoveBy(m_MovementDirection * m_Speed * dt);
+	m_CollisionBoundary.MoveBy(m_MovementDirection * m_Speed * (float)dt);
 	m_Rotation += m_RotatingSpeed * dt;
 }
 
@@ -64,4 +64,6 @@ std::string Asteroid::GetSpriteName()
 			return spriteName;
 		}
 	}
+
+	return spriteName;
 }

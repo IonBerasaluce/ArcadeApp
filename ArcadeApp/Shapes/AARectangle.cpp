@@ -61,7 +61,7 @@ bool AARectangle::ContainsPoint(const Vec2D& p) const
 
 AARectangle AARectangle::Inset(const AARectangle& rect, const Vec2D& insets)
 {	
-	return AARectangle(rect.GetTopLeft() + insets, rect.GetWidth() - 2 * insets.GetX(), rect.GetHeight() - 2 * insets.GetY());
+	return AARectangle(rect.GetTopLeft() + insets, (uint32_t)(rect.GetWidth() - 2 * insets.GetX()), (uint32_t)(rect.GetHeight() - 2 * insets.GetY()));
 }
 
 void AARectangle::PrintCoordinates() const

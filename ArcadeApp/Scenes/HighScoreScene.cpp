@@ -58,7 +58,7 @@ void HighScoreScene::Draw(Screen& theScreen)
 	{	
 		std::string text = score.PlayerName + "   " + std::to_string(score.score);
 
-		theScreen.Draw(font, text, Vec2D(width / 2 - maxWidth / 2, yOffset), Colour::White());
+		theScreen.Draw(font, text, Vec2D((float)(width / 2 - maxWidth / 2), (float)yOffset), Colour::White());
 
 		yOffset += fontSize.height + 20;
 	}

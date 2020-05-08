@@ -207,9 +207,9 @@ void BreakOut::Draw(Screen& screen)
 
 	screen.Draw(m_levelBoundary.GetAARectangle(), Colour::White());
 
-	Circle lifeCircle = { Vec2D(7, App::Singleton().Height() - 10), 5 };
+	Circle lifeCircle = { Vec2D(7.0f, (float)(App::Singleton().Height() - 10)), 5.0f };
 
-	Line2D cutoff = { Vec2D(0, m_YCutOff), Vec2D(App::Singleton().Width(), m_YCutOff) };
+	Line2D cutoff = { Vec2D(0.0f, m_YCutOff), Vec2D((float)(App::Singleton().Width()), m_YCutOff) };
 	screen.Draw(cutoff, Colour::White());
 
 	for (size_t i = 0; i < m_Lives; i++)
@@ -220,7 +220,7 @@ void BreakOut::Draw(Screen& screen)
 
 	// Update the score on the screen
 	std::string text = "Score " + std::to_string(m_Score.score);
-	AARectangle rect = { Vec2D(App::Singleton().Width() - m_Font.GetSizeOf(text).width - 5, App::Singleton().Height() - m_Font.GetSizeOf(text).height - 6), m_Font.GetSizeOf(text).width, m_Font.GetSizeOf(text).height };
+	AARectangle rect = { Vec2D((float)(App::Singleton().Width() - m_Font.GetSizeOf(text).width - 5), (float)(App::Singleton().Height() - m_Font.GetSizeOf(text).height - 6)), m_Font.GetSizeOf(text).width, m_Font.GetSizeOf(text).height };
 	Vec2D textDrawPosition = m_Font.GetDrawPosition(text, rect, BitmapFontXAlignment::BFXA_CENTRE, BitmapFontYAlignment::BFYA_CENTRE);
 
 	screen.Draw(m_Font, text, textDrawPosition, Colour::White());
@@ -241,16 +241,16 @@ void BreakOut::ResetGame(size_t toLevel)
 	m_HighScoreTable.Init("BreakOut");
 
 	m_Lives = NUM_LIVES;
-	m_YCutOff = App::Singleton().Height() - 2 * m_Paddle.PADDLE_HEIGHT;
+	m_YCutOff = (float)(App::Singleton().Height() - 2 * m_Paddle.PADDLE_HEIGHT);
 
-	AARectangle paddleRect = {Vec2D(App::Singleton().Width() / 2 - Paddle::PADDLE_WIDTH / 2, App::Singleton().Height() - 3 * Paddle::PADDLE_HEIGHT), Paddle::PADDLE_WIDTH, Paddle::PADDLE_HEIGHT};
+	AARectangle paddleRect = {Vec2D((float)(App::Singleton().Width() / 2 - Paddle::PADDLE_WIDTH / 2), (float)(App::Singleton().Height() - 3 * Paddle::PADDLE_HEIGHT)), Paddle::PADDLE_WIDTH, Paddle::PADDLE_HEIGHT};
 
 	AARectangle levelBoundary = { Vec2D::Zero, App::Singleton().Width(), App::Singleton().Height() };
 	
 	m_levelBoundary = { levelBoundary };
 
 	m_Paddle.Init(paddleRect, levelBoundary);
-	m_Ball.MoveTo(Vec2D(App::Singleton().Width()/2.0f, App::Singleton().Height() * 0.75f));
+	m_Ball.MoveTo(Vec2D((float)(App::Singleton().Width() / 2.0f), (float)(App::Singleton().Height() * 0.75f)));
 
 	SetToServeState();
 }

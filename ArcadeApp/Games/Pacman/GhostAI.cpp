@@ -123,12 +123,12 @@ PacmanMovement GhostAI::Update(uint32_t dt, const PacmanPlayer& pacman, const Pa
 		// Which direction to take
 		for (const auto& direction : possibleDirections)
 		{
-			Vec2D movementVec = GetMovementVector(direction) * m_LookaheadDistance;
+			Vec2D movementVec = GetMovementVector(direction) * (float)m_LookaheadDistance;
 			AARectangle bbox = m_ptrGhost->GetBoundingBox();
 
 			bbox.MoveBy(movementVec);
 
-			uint32_t distanceToTarget = bbox.GetCenterPoint().Distance(m_Target);
+			uint32_t distanceToTarget = (uint32_t)bbox.GetCenterPoint().Distance(m_Target);
 
 			if (distanceToTarget < lowestDistance)
 			{

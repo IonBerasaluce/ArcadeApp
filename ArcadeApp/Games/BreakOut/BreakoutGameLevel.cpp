@@ -113,7 +113,7 @@ void BreakoutGameLevel::CreateDefaultLevel(const AARectangle& boundary)
 
 	for (int r = 0; r < NUM_BLOCK_ROWS; ++r)
 	{
-		AARectangle blockRect = { Vec2D(startX, BLOCK_HEIGHT * (r + 1)), BLOCK_WIDTH, BLOCK_HEIGHT };
+		AARectangle blockRect = { Vec2D(startX, (float)(BLOCK_HEIGHT * (r + 1))), BLOCK_WIDTH, BLOCK_HEIGHT };
 
 		for (int c = 0; c  < NUM_BLOCKS_ACROSS; c ++)
 		{
@@ -236,7 +236,7 @@ std::vector<BreakoutGameLevel> BreakoutGameLevel::LoadLevelsFromFile(const std::
 		int screenWidth = App::Singleton().Width();
 
 		float startingX = 0;
-		AARectangle blockRect(Vec2D(startingX, (params.lineNum + 1) * BLOCK_HEIGHT), BLOCK_WIDTH, BLOCK_HEIGHT);
+		AARectangle blockRect(Vec2D(startingX, (float)((params.lineNum + 1) * BLOCK_HEIGHT)), BLOCK_WIDTH, BLOCK_HEIGHT);
 
 		for (int c = 0; c < params.line.length(); c++)
 		{
