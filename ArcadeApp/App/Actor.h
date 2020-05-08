@@ -32,7 +32,7 @@ public:
 
 
 protected:
-	virtual void SetAnimation(const std::string& animationName, bool looped);
+	void SetAnimation(const std::string& animationName, bool looped);
 
 	AnimatedSprite m_Sprite;
 

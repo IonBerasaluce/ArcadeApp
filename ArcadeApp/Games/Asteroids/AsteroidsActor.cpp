@@ -30,7 +30,6 @@ void AsteroidsActor::Draw(Screen& screen)
 
 void AsteroidsActor::WrapAroundBoundary(const AARectangle& boundary)
 {
-	// This needs some cleaning 
 	Vec2D centrePoint = m_Sprite.GetBoundingBox().GetTopLeft();
 	Vec2D position = centrePoint;
 

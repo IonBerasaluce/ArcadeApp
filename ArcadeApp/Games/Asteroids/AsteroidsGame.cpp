@@ -96,7 +96,7 @@ void AsteroidsGame::Update(uint32_t dt)
 
 	for (size_t i = 0; i < size; i++)
 	{
-		if (m_Asteroids[i].IsDestroyed() && m_Asteroids[i].GetSize() > 1)
+		if (m_Asteroids[i].IsDestroyed() && m_Asteroids[i].GetSize() > 1 && m_Asteroids[i].Reproduce())
 		{
 			Asteroid currentAsteroid = m_Asteroids[i];
 			GenerateAsteroids(2, static_cast<AsteroidSize>(currentAsteroid.GetSize() - 1), currentAsteroid.Position());
@@ -155,13 +155,10 @@ void AsteroidsGame::CalculateCollisions(Player& player)
 {
 	for (size_t i = 0; i < m_Asteroids.size(); i++)
 	{
-		// Collision Asteroid to player
-		float distance = m_Asteroids[i].Position().Distance(m_Player.Position());
-		if (distance < m_Asteroids[i].GetRadious())
+		if (m_Asteroids[i].GetCollisionBox().Intersect(m_Player.GetCollisionBox()))
 		{
-			m_Player.SetAnimation("explosion", false);
-			m_Player.LossLife();
-			m_Player.Reset();
+			m_Asteroids[i].Hit(false);
+			m_Player.CrashedIntoAsteroid();
 		}
 
 		// Collision Asteroid to missile
