@@ -326,11 +326,22 @@ void Screen::Draw(const BMPImage& image, const Sprite& sprite, const Vec2D& pos,
 	Vec2D bottomLeft = pos + Vec2D(0.0f, (float)height);
 	Vec2D bottomRight = pos + Vec2D((float)width, (float)height);
 
+	// We need to get the centre point for the rotation here and save the values for sin and cos of rotation angle
+	Vec2D centerPoint = Vec2D((topRight.GetX() - topLeft.GetX()) / 2, (bottomLeft.GetY() - topLeft.GetY()) / 2) + topLeft;
+	float cosine = cosf(rotation);
+	float sine = sinf(rotation);
+
 	// Points in the screen
 	std::vector<Vec2D> points = { topLeft, bottomLeft, bottomRight, topRight };
 
-	Vec2D xAxis = topRight - topLeft;
-	Vec2D yAxis = bottomLeft - topLeft;
+	// Apply the rotation of those points about the center point
+	for (auto& point : points)
+	{
+		point.Rotate(rotation, centerPoint);
+	}
+
+	Vec2D xAxis = points[3] - points[0];
+	Vec2D yAxis = points[1] - points[0];
 
 	// Less than one since we divide by the sprite width squared
 	const float invXAxisLengthSq = 1.0f / xAxis.Mag2();
@@ -339,7 +350,7 @@ void Screen::Draw(const BMPImage& image, const Sprite& sprite, const Vec2D& pos,
 	FillPoly(points, [&](uint32_t px, uint32_t py)
 	{
 			Vec2D p = { static_cast<float>(px), static_cast<float>(py) };
-			Vec2D d = p - topLeft;
+			Vec2D d = p - points[0];
 
 			// Value from 0 to 1 from where we are drawing in the screen no matter if the object is rotated or scaled
 			float u = fabsf(invXAxisLengthSq * d.Dot(xAxis));
@@ -435,11 +446,6 @@ void Screen::FillPoly(const std::vector<Vec2D>& points, FillPolyFunc func, float
 			
 		}
 
-		// We need to get the centre point for the rotation here and save the values for sin and cos of rotation angle
-		Vec2D centerPoint = Vec2D((right - left) / 2, (bottom - top) / 2) + Vec2D(left, top);
-		float cosine = cosf(angle);
-		float sine = sinf(angle);
-
 		// Scan line fill poly algorithm
 		for (int pixelY = (int)top; pixelY < (int)bottom; ++pixelY)
 		{
@@ -486,9 +492,8 @@ void Screen::FillPoly(const std::vector<Vec2D>& points, FillPolyFunc func, float
 					for (int pixelX = (int)nodeXVec[k]; pixelX < nodeXVec[k + 1]; ++pixelX)
 					{
 						// Update the position of the pixelX and Pixel Y based on the rotated pixel
-						// Wrap and rotate the pixels
+						// Wrap the pixels
 						Vec2D transformedPixels = Vec2D((float)pixelX, (float)pixelY);
-						transformedPixels.Rotate(angle, centerPoint);
 
 						if (transformedPixels.GetX() < 0.0f)
 						{

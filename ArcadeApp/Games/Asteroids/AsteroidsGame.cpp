@@ -232,7 +232,7 @@ void AsteroidsGame::Draw(Screen& screen)
 		uint32_t sHeight = App::Singleton().Height();
 
 		Vec2D textPos;
-		AARectangle rect = AARectangle(Vec2D(sWidth / 2, sHeight / 2) - Vec2D(3, 3), 6, 6);
+		AARectangle rect = AARectangle(Vec2D((float)sWidth / 2, (float)sHeight / 2) - Vec2D(3, 3), 6, 6);
 		
 		if (m_GameState == AsteroidsGameState::LEVEL_STARTING)
 		{
