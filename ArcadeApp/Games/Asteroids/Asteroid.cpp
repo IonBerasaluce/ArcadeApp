@@ -9,7 +9,7 @@
 const float Asteroid::m_RotatingSpeed = 0.002f;
 const float Asteroid::m_Speed = 0.008f;
 
-Asteroid::Asteroid():m_Size(AsteroidSize::SMALL), m_Destroyed(false), m_Rotation(0), m_Reproduce(true)
+Asteroid::Asteroid() :m_Size(AsteroidSize::SMALL), m_Destroyed(false), m_Rotation(0), m_Reproduce(true), m_Score(0)
 {
 }
 
