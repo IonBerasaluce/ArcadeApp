@@ -25,24 +25,27 @@ public:
 
 	inline const unsigned int GetSize() const { return static_cast<int>(m_Size); }
 	inline bool IsDestroyed() const { return m_Destroyed; }
-	inline float const GetRadious() const { return m_CollisionBoundary.GetRadius(); }
-	inline Vec2D const Position() const { return m_CollisionBoundary.GetCenterPoint(); }
-	inline Circle const GetCollisionBox() const{ return m_CollisionBoundary; }
+	inline float const GetRadious() const { return m_CollisionBoundaries[0].GetRadius(); }
+	inline Vec2D const Position() const { return m_SpriteBox.GetCenterPoint(); }
+	inline std::vector<Circle> const GetCollisionBoxes() const{ return m_CollisionBoundaries; }
 	inline bool Reproduce() const { return m_Reproduce; }
-	int const GetScore() const;
+	inline int const GetScore() const { return m_Score; }
 
 	void Hit(const bool split = true);
 
 private:
 	std::string GetSpriteName();
-	void WrapAroundBoundary(const AARectangle& boundary);
+	void WrapAroundBoundary(AARectangle* box, const AARectangle& boundary);
+	void WrapAroundBoundary(Circle* colBoundary, const AARectangle& boundary);
+	void GetBoundaryOffset(Vec2D& offset, int boundaryID);
 
 private:
-	Circle m_CollisionBoundary;
+	std::vector<Circle> m_CollisionBoundaries;
 	Vec2D m_LookingDirection;
 	Vec2D m_MovementDirection;
 	
 	AsteroidSize m_Size;
+	int m_Score;
 	bool m_Destroyed;
 	float m_Rotation;
 	bool m_Reproduce;

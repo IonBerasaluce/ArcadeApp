@@ -253,26 +253,33 @@ void AsteroidsGame::Draw(Screen& screen)
 
 void AsteroidsGame::CalculateCollisions(Player& player)
 {
+	std::vector<Circle> colBoundaries;
 	for (size_t i = 0; i < m_Asteroids.size(); i++)
 	{
 		// Collision Asteroid to player
-		if (m_Asteroids[i].GetCollisionBox().Intersect(m_Player.GetCollisionBox()))
+		colBoundaries = m_Asteroids[i].GetCollisionBoxes();
+		for (auto& boundary : colBoundaries)
 		{
-			m_Asteroids[i].Hit(false);
-			m_Player.CrashedIntoAsteroid();
-			m_GameState = AsteroidsGameState::LOSS_LIFE;
-		}
-
-		// Collision Asteroid to missile
-		for (size_t j = 0; j < m_Misiles.size(); j++)
-		{
-			if (!m_Misiles[j].IsHit())
+			if (boundary.Intersect(m_Player.GetCollisionBox()))
 			{
-				if (m_Asteroids[i].GetCollisionBox().Intersect(m_Misiles[j].GetCollisionBox()))
+				m_Asteroids[i].Hit(false);
+				m_Player.CrashedIntoAsteroid();
+				m_GameState = AsteroidsGameState::LOSS_LIFE;
+				break;
+			}
+
+			// Collision Asteroid to missile
+			for (size_t j = 0; j < m_Misiles.size(); j++)
+			{
+				if (!m_Misiles[j].IsHit())
 				{
-					m_Misiles[j].Hit(m_Asteroids[i].GetSize() == 0);
-					m_Asteroids[i].Hit();
-					m_Player.AddToScore(m_Asteroids[i].GetScore());
+					if (boundary.Intersect(m_Misiles[j].GetCollisionBox()))
+					{
+						m_Misiles[j].Hit(m_Asteroids[i].GetSize() == 0);
+						m_Asteroids[i].Hit();
+						m_Player.AddToScore(m_Asteroids[i].GetScore());
+						break;
+					}
 				}
 			}
 		}
